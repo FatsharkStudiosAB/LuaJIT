@@ -110,7 +110,11 @@ void *LJ_WIN_VALLOC_CODE(void *hint, size_t sz, unsigned atype, unsigned prot)
 
 #elif LJ_TARGET_POSIX
 
+#if LJ_TARGET_PS5
+#include "ps5_mmap.h"
+#else
 #include <sys/mman.h>
+#endif
 
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS	MAP_ANON

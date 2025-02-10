@@ -393,7 +393,7 @@ static void bcwrite_header(BCWriteCtx *ctx)
   *p++ = BCDUMP_HEAD1;
   *p++ = BCDUMP_HEAD2;
   *p++ = BCDUMP_HEAD3;
-  *p++ = BCDUMP_VERSION;
+  *p++ = (unsigned char)BCDUMP_VERSION;
   *p++ = (ctx->flags & (BCDUMP_F_STRIP | BCDUMP_F_FR2)) +
 	 LJ_BE*BCDUMP_F_BE +
 	 ((ctx->pt->flags & PROTO_FFI) ? BCDUMP_F_FFI : 0);

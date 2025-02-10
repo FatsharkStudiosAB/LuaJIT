@@ -58,12 +58,8 @@ if exist minilua.exe.manifest^
 @set DASMTARGET=-D LUAJIT_TARGET=LUAJIT_ARCH_ARM64
 @set LJARCH=arm64
 @if "%1" neq "arm64ec" goto :DA
-@shift
 @set DASMFLAGS=%DASMFLAGS% -D ARM64EC
 @set DASMTARGET=%DASMTARGET% -D LJ_ABI_ARM64EC=1
-@set LJCOMPILE=%LJCOMPILE% /arm64EC
-@set LJLINK=%LJLINK% /machine:arm64ec
-@set LJLIB=%LJLIB% /machine:arm64ec
 @goto :DA
 :X64
 @if "%1" neq "nogc64" goto :DA
@@ -102,7 +98,14 @@ buildvm -m vmdef -o jit\vmdef.lua %ALL_LIB%
 buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 @if errorlevel 1 goto :BAD
 
+@if "%1" neq "arm64ec" goto :BUILD
+@shift
+@set LJCOMPILE=%LJCOMPILE% /arm64EC
+@set LJLINK=%LJLINK% /machine:arm64ec
+@set LJLIB=%LJLIB% /machine:arm64ec
+:BUILD
 @if "%1" neq "debug" goto :NODEBUG
+@echo "building debug build"
 @shift
 @set LJCOMPILE=%LJCOMPILE% %DEBUGCFLAGS%
 @set LJDYNBUILD=%LJDYNBUILD_DEBUG%

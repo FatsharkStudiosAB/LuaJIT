@@ -30,13 +30,13 @@
 
 /* Bytecode dump header. */
 #define BCDUMP_HEAD1		0x1b
-#define BCDUMP_HEAD2		0x4c
-#define BCDUMP_HEAD3		0x4a
+#define BCDUMP_HEAD2		'F'
+#define BCDUMP_HEAD3		'S'
 
 /* If you perform *any* kind of private modifications to the bytecode itself
 ** or to the dump format, you *must* set BCDUMP_VERSION to 0x80 or higher.
 */
-#define BCDUMP_VERSION		2
+#define BCDUMP_VERSION		(0x80|2)
 
 /* Compatibility flags. */
 #define BCDUMP_F_BE		0x01
