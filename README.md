@@ -8,7 +8,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 
 # Changes
 
-None (yet).
+- Add luaFS_newstate to plug in allocators in 64-bit mode w/o GC64.
 
 # License
 

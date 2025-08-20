@@ -398,5 +398,10 @@ struct lua_Debug {
 * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+/*
+** Fatshark LuaJIT extensions.
+*/
+
+LUA_API lua_State *(luaFS_newstate) (lua_Alloc f, void *ud);
 
 #endif
