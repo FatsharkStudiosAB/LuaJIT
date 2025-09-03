@@ -283,8 +283,8 @@ static GCstr *lj_str_alloc(lua_State *L, const char *str, MSize len,
   s->len = len;
   s->hash = hash;
 #ifndef STRID_RESEED_INTERVAL
-  s->sid = g->str.id++;
-#elif STRID_RESEED_INTERVAL
+  s->sid = g->str.fsfixstrid ? hash : g->str.id++;
+#elif STID_RESEED_INTERVAL
   if (!g->str.idreseed--) {
     uint64_t r = lj_prng_u64(&g->prng);
     g->str.id = (StrID)r;

@@ -11,6 +11,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Add luaFS_newstate to plug in allocators in 64-bit mode w/o GC64.
 - Add LUAFS_GCESTIMATE that returns an estimate of uncollected garbage.
 - Change the bytecode header to \x1bFS as a step towards private modifications.
+- Add string.fsfixstrid to ease porting legacy code that depends on [`pairs()` order](https://luajit.org/faq.html#order).
 
 # License
 
