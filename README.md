@@ -14,6 +14,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Add string.fsfixstrid to ease porting legacy code that depends on [`pairs()` order](https://luajit.org/faq.html#order).
 - Change VM security values to suit performance needs.
 - Add .pdb to .gitignore.
+- Set ERRORLEVEL on msvcbuild.bat failure.
 
 # License
 
