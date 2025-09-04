@@ -16,6 +16,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Add .pdb to .gitignore.
 - Set ERRORLEVEL on msvcbuild.bat failure.
 - Add table.size to get raw array/hash sizes.
+- Add more information to bc.lua output.
 
 # License
 
