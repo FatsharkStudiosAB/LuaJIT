@@ -13,6 +13,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Change the bytecode header to \x1bFS as a step towards private modifications.
 - Add string.fsfixstrid to ease porting legacy code that depends on [`pairs()` order](https://luajit.org/faq.html#order).
 - Change VM security values to suit performance needs.
+- Add .pdb to .gitignore.
 
 # License
 
