@@ -15,6 +15,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Change VM security values to suit performance needs.
 - Add .pdb to .gitignore.
 - Set ERRORLEVEL on msvcbuild.bat failure.
+- Add table.size to get raw array/hash sizes.
 
 # License
 
