@@ -307,6 +307,14 @@ LJLIB_NOREG LJLIB_CF(table_size)
   return 2;
 }
 
+LJLIB_NOREG LJLIB_CF(table_dup)		LJLIB_REC(.)
+{
+  GCtab *t = lj_lib_checktab(L, 1);
+  GCtab *c = lj_tab_dup(L, t);
+  settabV(L, L->top-1, c);
+  return 1;
+}
+
 static int luaopen_table_new(lua_State *L)
 {
   return lj_lib_postreg(L, lj_cf_table_new, FF_table_new, "new");
@@ -320,6 +328,11 @@ static int luaopen_table_clear(lua_State *L)
 static int luaopen_table_size(lua_State *L)
 {
   return lj_lib_postreg(L, lj_cf_table_size, FF_table_size, "size");
+}
+
+static int luaopen_table_dup(lua_State *L)
+{
+  return lj_lib_postreg(L, lj_cf_table_dup, FF_table_dup, "dup");
 }
 
 /* ------------------------------------------------------------------------ */
@@ -336,6 +349,7 @@ LUALIB_API int luaopen_table(lua_State *L)
   lj_lib_prereg(L, LUA_TABLIBNAME ".new", luaopen_table_new, tabV(L->top-1));
   lj_lib_prereg(L, LUA_TABLIBNAME ".clear", luaopen_table_clear, tabV(L->top-1));
   lj_lib_prereg(L, LUA_TABLIBNAME ".size", luaopen_table_size, tabV(L->top-1));
+  lj_lib_prereg(L, LUA_TABLIBNAME ".dup", luaopen_table_dup, tabV(L->top-1));
   return 1;
 }
 

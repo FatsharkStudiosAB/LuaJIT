@@ -17,6 +17,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Set ERRORLEVEL on msvcbuild.bat failure.
 - Add table.size to get raw array/hash sizes.
 - Add line numbers and constants to bc.lua output.
+- Add table.dup (JIT compiled).
 
 # License
 
