@@ -307,11 +307,47 @@ LJLIB_NOREG LJLIB_CF(table_size)
   return 2;
 }
 
+static GCtab *deepdup(lua_State *L, const GCtab *kt)
+{
+  GCtab *t;
+  uint32_t asize, hmask;
+  t = lj_tab_new(L, kt->asize, kt->hmask > 0 ? lj_fls(kt->hmask)+1 : 0);
+  t->nomm = 0;  /* Keys with metamethod names may be present. */
+  asize = kt->asize;
+  if (asize > 0) {
+    TValue *arr = tvref(t->array);
+    TValue *karr = tvref(kt->array);
+    uint32_t i;
+    for (i = 0; i < asize; i++) {
+      copyTV(L, &arr[i], &karr[i]);
+      if (tvistab(&arr[i])) settabV(L, &arr[i], deepdup(L, tabV(&arr[i])));
+    }
+  }
+  hmask = kt->hmask;
+  if (hmask > 0) {
+    uint32_t i;
+    Node *node = noderef(t->node);
+    Node *knode = noderef(kt->node);
+    ptrdiff_t d = (char *)node - (char *)knode;
+    setfreetop(t, node, (Node *)((char *)getfreetop(kt, knode) + d));
+    for (i = 0; i <= hmask; i++) {
+      Node *kn = &knode[i];
+      Node *n = &node[i];
+      Node *next = nextnode(kn);
+      /* Don't use copyTV here, since it asserts on a copy of a dead key. */
+      n->val = kn->val; n->key = kn->key;
+      if (tvistab(&n->val)) settabV(L, &n->val, deepdup(L, tabV(&n->val)));
+      if (tvistab(&n->key)) settabV(L, &n->key, deepdup(L, tabV(&n->val)));
+      setmref(n->next, next == NULL? next : (Node *)((char *)next + d));
+    }
+  }
+  return t;
+}
+
 LJLIB_NOREG LJLIB_CF(table_dup)		LJLIB_REC(.)
 {
-  GCtab *t = lj_lib_checktab(L, 1);
-  GCtab *c = lj_tab_dup(L, t);
-  settabV(L, L->top-1, c);
+  const GCtab *kt = lj_lib_checktab(L, 1);
+  settabV(L, L->top-1, deepdup(L, kt));
   return 1;
 }
 
