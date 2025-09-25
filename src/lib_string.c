@@ -1,6 +1,6 @@
 /*
 ** String library.
-** Copyright (C) 2005-2023 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 **
 ** Major portions taken verbatim or adapted from the Lua interpreter.
 ** Copyright (C) 1994-2008 Lua.org, PUC-Rio. See Copyright Notice in lua.h
@@ -669,6 +669,19 @@ LJLIB_CF(string_format)		LJLIB_REC(.)
 
 /* ------------------------------------------------------------------------ */
 
+LJLIB_NOREG LJLIB_CF(string_fsfixstrid)
+{
+  G(L)->str.fsfixstrid = tvistruecond(L->base);
+  return 0;
+}
+
+static int luaopen_string_fsfixstrid(lua_State *L)
+{
+  return lj_lib_postreg(L, lj_cf_string_fsfixstrid, FF_string_fsfixstrid, "fsfixstrid");
+}
+
+/* ------------------------------------------------------------------------ */
+
 #include "lj_libdef.h"
 
 LUALIB_API int luaopen_string(lua_State *L)
@@ -685,6 +698,7 @@ LUALIB_API int luaopen_string(lua_State *L)
 #if LJ_HASBUFFER
   lj_lib_prereg(L, LUA_STRLIBNAME ".buffer", luaopen_string_buffer, tabV(L->top-1));
 #endif
+  lj_lib_prereg(L, LUA_STRLIBNAME ".fsfixstrid", luaopen_string_fsfixstrid, tabV(L->top-1));
   return 1;
 }
 

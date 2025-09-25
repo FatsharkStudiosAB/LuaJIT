@@ -1,6 +1,6 @@
 /*
 ** Table library.
-** Copyright (C) 2005-2023 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 **
 ** Major portions taken verbatim or adapted from the Lua interpreter.
 ** Copyright (C) 1994-2008 Lua.org, PUC-Rio. See Copyright Notice in lua.h
@@ -299,6 +299,58 @@ LJLIB_NOREG LJLIB_CF(table_clear)	LJLIB_REC(.)
   return 0;
 }
 
+LJLIB_NOREG LJLIB_CF(table_size)
+{
+  GCtab *t = lj_lib_checktab(L, 1);
+  setnumV(L->top++, t->asize);
+  setnumV(L->top++, t->hmask);
+  return 2;
+}
+
+static GCtab *deepdup(lua_State *L, const GCtab *kt)
+{
+  GCtab *t;
+  uint32_t asize, hmask;
+  t = lj_tab_new(L, kt->asize, kt->hmask > 0 ? lj_fls(kt->hmask)+1 : 0);
+  t->nomm = 0;  /* Keys with metamethod names may be present. */
+  asize = kt->asize;
+  if (asize > 0) {
+    TValue *arr = tvref(t->array);
+    TValue *karr = tvref(kt->array);
+    uint32_t i;
+    for (i = 0; i < asize; i++) {
+      copyTV(L, &arr[i], &karr[i]);
+      if (tvistab(&arr[i])) settabV(L, &arr[i], deepdup(L, tabV(&arr[i])));
+    }
+  }
+  hmask = kt->hmask;
+  if (hmask > 0) {
+    uint32_t i;
+    Node *node = noderef(t->node);
+    Node *knode = noderef(kt->node);
+    ptrdiff_t d = (char *)node - (char *)knode;
+    setfreetop(t, node, (Node *)((char *)getfreetop(kt, knode) + d));
+    for (i = 0; i <= hmask; i++) {
+      Node *kn = &knode[i];
+      Node *n = &node[i];
+      Node *next = nextnode(kn);
+      /* Don't use copyTV here, since it asserts on a copy of a dead key. */
+      n->val = kn->val; n->key = kn->key;
+      if (tvistab(&n->val)) settabV(L, &n->val, deepdup(L, tabV(&n->val)));
+      if (tvistab(&n->key)) settabV(L, &n->key, deepdup(L, tabV(&n->val)));
+      setmref(n->next, next == NULL? next : (Node *)((char *)next + d));
+    }
+  }
+  return t;
+}
+
+LJLIB_NOREG LJLIB_CF(table_dup)		LJLIB_REC(.)
+{
+  const GCtab *kt = lj_lib_checktab(L, 1);
+  settabV(L, L->top-1, deepdup(L, kt));
+  return 1;
+}
+
 static int luaopen_table_new(lua_State *L)
 {
   return lj_lib_postreg(L, lj_cf_table_new, FF_table_new, "new");
@@ -306,7 +358,17 @@ static int luaopen_table_new(lua_State *L)
 
 static int luaopen_table_clear(lua_State *L)
 {
-  return lj_lib_postreg(L, lj_cf_table_clear, FF_table_clear, "clear");
+  return lj_lib_postreg(L, lj_cf_table_clear, FF_C, "clear");
+}
+
+static int luaopen_table_size(lua_State *L)
+{
+  return lj_lib_postreg(L, lj_cf_table_size, FF_table_size, "size");
+}
+
+static int luaopen_table_dup(lua_State *L)
+{
+  return lj_lib_postreg(L, lj_cf_table_dup, FF_table_dup, "dup");
 }
 
 /* ------------------------------------------------------------------------ */
@@ -322,6 +384,8 @@ LUALIB_API int luaopen_table(lua_State *L)
 #endif
   lj_lib_prereg(L, LUA_TABLIBNAME ".new", luaopen_table_new, tabV(L->top-1));
   lj_lib_prereg(L, LUA_TABLIBNAME ".clear", luaopen_table_clear, tabV(L->top-1));
+  lj_lib_prereg(L, LUA_TABLIBNAME ".size", luaopen_table_size, tabV(L->top-1));
+  lj_lib_prereg(L, LUA_TABLIBNAME ".dup", luaopen_table_dup, tabV(L->top-1));
   return 1;
 }
 

@@ -1,6 +1,6 @@
 /*
 ** LuaJIT VM tags, values and objects.
-** Copyright (C) 2005-2023 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 **
 ** Portions taken verbatim or adapted from the Lua interpreter.
 ** Copyright (C) 1994-2008 Lua.org, PUC-Rio. See Copyright Notice in lua.h
@@ -625,7 +625,7 @@ typedef struct StrInternState {
   StrID id;		/* Next string ID. */
   uint8_t idreseed;	/* String ID reseed counter. */
   uint8_t second;	/* String interning table uses secondary hashing. */
-  uint8_t unused1;
+  uint8_t fsfixstrid;	/* Restore old string ID behaviour. Temporary. */
   uint8_t unused2;
   LJ_ALIGN(8) uint64_t seed;	/* Random string seed. */
 } StrInternState;

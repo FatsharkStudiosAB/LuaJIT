@@ -1,6 +1,6 @@
 /*
 ** Target architecture selection.
-** Copyright (C) 2005-2023 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 */
 
 #ifndef _LJ_ARCH_H
@@ -735,12 +735,14 @@ extern void *LJ_WIN_VALLOC_CODE(void *hint, size_t sz, unsigned atype,
 
 #ifndef LUAJIT_SECURITY_STRHASH
 /* String hash: 0 = sparse only, 1 = sparse + dense. */
-#define LUAJIT_SECURITY_STRHASH	1
+/* FATSHARK: Globally disabled due to performance needs. */
+#define LUAJIT_SECURITY_STRHASH	0
 #endif
 
 #ifndef LUAJIT_SECURITY_STRID
 /* String IDs: 0 = linear, 1 = reseed < 255, 2 = reseed < 15, 3 = random. */
-#define LUAJIT_SECURITY_STRID	1
+/* FATSHARK: Globally disabled due to performance needs. */
+#define LUAJIT_SECURITY_STRID	0
 #endif
 
 #ifndef LUAJIT_SECURITY_MCODE

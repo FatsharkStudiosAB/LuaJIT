@@ -1,6 +1,6 @@
 /*
 ** Public Lua/C API.
-** Copyright (C) 2005-2023 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 **
 ** Major portions taken verbatim or adapted from the Lua interpreter.
 ** Copyright (C) 1994-2008 Lua.org, PUC-Rio. See Copyright Notice in lua.h
@@ -1299,6 +1299,9 @@ LUA_API int lua_gc(lua_State *L, int what, int data)
 	  break;
   case LUA_GCISRUNNING:
     res = (g->gc.threshold != LJ_MAX_MEM);
+    break;
+  case LUAFS_GCESTIMATE:
+    res = (int)(g->gc.estimate >> 10);
     break;
   default:
     res = -1;  /* Invalid option. */

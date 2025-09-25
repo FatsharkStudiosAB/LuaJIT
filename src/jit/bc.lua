@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------
 -- LuaJIT bytecode listing module.
 --
--- Copyright (C) 2005-2023 Mike Pall. All rights reserved.
+-- Copyright (C) 2005-2025 Mike Pall. All rights reserved.
 -- Released under the MIT license. See Copyright Notice in luajit.h
 ----------------------------------------------------------------------------
 --
@@ -44,7 +44,9 @@ local jit = require("jit")
 local jutil = require("jit.util")
 local vmdef = require("jit.vmdef")
 local bit = require("bit")
+require("table.size")
 local sub, gsub, format = string.sub, string.gsub, string.format
+local match, concat = string.match, table.concat
 local byte, band, shr = string.byte, bit.band, bit.rshift
 local funcinfo, funcbc, funck = jutil.funcinfo, jutil.funcbc, jutil.funck
 local funcuvname = jutil.funcuvname
@@ -61,6 +63,31 @@ local function ctlsub(c)
   end
 end
 
+local function formatstr(str)
+  return format(#str > 40 and '"%.40s"~' or '"%s"', gsub(str, "%c", ctlsub))
+end
+
+local function formatkgc(kgc)
+  local t = type(kgc)
+  if t == "string" then
+   return formatstr(kgc)
+  elseif t == "table" then
+    local b, i = {}, 0
+    for k, v in pairs(kgc) do
+      if k == i then i = i + 1
+      elseif type(k) == "string" then
+	if #k > 16 or not match(k, "^[%a_][%w_]*$") then
+	  k = "["..formatstr(k).."]"
+	end
+      else k = format("[%s]", k) end
+      b[#b+1] = format("%s = %s", k, formatkgc(v))
+    end
+    if not next(b) then return "{}" end
+    return format("{ %s }", concat(b, ", "))
+  end
+  return kgc
+end
+
 -- Return one bytecode line.
 local function bcline(func, pc, prefix)
   local ins, m = funcbc(func, pc)
@@ -69,8 +96,9 @@ local function bcline(func, pc, prefix)
   local a = band(shr(ins, 8), 0xff)
   local oidx = 6*band(ins, 0xff)
   local op = sub(bcnames, oidx+1, oidx+6)
-  local s = format("%04d %s %-6s %3s ",
-    pc, prefix or "  ", op, ma == 0 and "" or a)
+  local currentline = format("(%d)", funcinfo(func, pc).currentline)
+  local s = format("%04d  %-5s %s %-6s %3s ",
+    pc, currentline, prefix or "  ", op, ma == 0 and "" or a)
   local d = shr(ins, 16)
   if mc == 13*128 then -- BCMjump
     return format("%s=> %04d\n", s, pc+d-0x7fff)
@@ -83,7 +111,7 @@ local function bcline(func, pc, prefix)
   local kc
   if mc == 10*128 then -- BCMstr
     kc = funck(func, -d-1)
-    kc = format(#kc > 40 and '"%.40s"~' or '"%s"', gsub(kc, "%c", ctlsub))
+    kc = formatstr(kc)
   elseif mc == 9*128 then -- BCMnum
     kc = funck(func, d)
     if op == "TSETM " then kc = kc - 2^52 end
@@ -134,8 +162,18 @@ local function bcdump(func, out, all)
     end
   end
   out:write(format("-- BYTECODE -- %s-%d\n", fi.loc, fi.lastlinedefined))
+  for i=0, 1000000000 do
+    local kn = funck(func, i)
+    if not kn then break end
+    out:write(format("KN[%d]  %s\n", i, kn))
+  end
+  for i=1, 1000000000 do
+    local kgc = funck(func, -i)
+    if not kgc then break end
+    out:write(format("KGC[%d]  %s\n", i, formatkgc(kgc)))
+  end
   local target = bctargets(func)
-  for pc=1,1000000000 do
+  for pc=0,1000000000 do
     local s = bcline(func, pc, target[pc] and "=>")
     if not s then break end
     out:write(s)

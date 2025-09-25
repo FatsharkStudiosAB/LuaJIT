@@ -1,6 +1,6 @@
 /*
 ** Auxiliary library for the Lua/C API.
-** Copyright (C) 2005-2023 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 **
 ** Major parts taken verbatim or adapted from the Lua interpreter.
 ** Copyright (C) 1994-2008 Lua.org, PUC-Rio. See Copyright Notice in lua.h
@@ -396,6 +396,24 @@ LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
   return NULL;
 }
 #endif
+
+/* Allow plugging a custom allocator even in 64-bit mode with GC64 disabled.
+** Note: in the aforementioned case the allocator *must* return memory addresses
+** limited to the lowest 4 GB of the virtual address space.
+*/
+LUA_API lua_State *luaFS_newstate(lua_Alloc f, void *ud)
+{
+#if LJ_64 && !LJ_GC64
+  void *probe = f(ud, 0, 0, 8);
+  int ok = (uintptr_t)probe < 0x40000000u;
+  if (!ok)
+    fputs("Invalid allocator provided to luaFS_newstate()\n", stderr);
+  f(ud, probe, 8, 0);
+  return ok ? lj_state_newstate(f, ud) : 0;
+#else
+  return lua_newstate(f, ud);
+#endif
+}
 
 #endif
 

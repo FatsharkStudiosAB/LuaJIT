@@ -1,6 +1,6 @@
 /*
 ** Fast function call recorder.
-** Copyright (C) 2005-2023 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 */
 
 #define lj_ffrecord_c
@@ -1485,6 +1485,14 @@ static void LJ_FASTCALL recff_table_clear(jit_State *J, RecordFFData *rd)
     rd->nres = 0;
     lj_ir_call(J, IRCALL_lj_tab_clear, tr);
     J->needsnap = 1;
+  }  /* else: Interpreter will throw. */
+}
+
+static void LJ_FASTCALL recff_table_dup(jit_State *J, RecordFFData *rd)
+{
+  TRef tr = J->base[0];
+  if (tref_istab(tr)) {
+    lj_ir_call(J, IRCALL_lj_tab_dup, tr);
   }  /* else: Interpreter will throw. */
 }
 
