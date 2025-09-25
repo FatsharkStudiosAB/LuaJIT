@@ -92,7 +92,11 @@ static int mcode_setprot(void *p, size_t sz, DWORD prot)
 
 #elif LJ_TARGET_POSIX
 
+#if LJ_TARGET_PS5
+#include "ps5_mmap.h"
+#else
 #include <sys/mman.h>
+#endif
 
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS	MAP_ANON

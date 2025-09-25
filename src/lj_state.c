@@ -236,7 +236,7 @@ static void close_state(lua_State *L)
     g->allocf(g->allocd, G2GG(g), sizeof(GG_State), 0);
 }
 
-#if LJ_64 && !LJ_GC64 && !(defined(LUAJIT_USE_VALGRIND) && defined(LUAJIT_USE_SYSMALLOC))
+#if LJ_64 && !LJ_GC64 && !(defined(LUAJIT_USE_VALGRIND) && defined(LUAJIT_USE_SYSMALLOC)) && !LJ_TARGET_PS5
 lua_State *lj_state_newstate(lua_Alloc allocf, void *allocd)
 #else
 LUA_API lua_State *lua_newstate(lua_Alloc allocf, void *allocd)
