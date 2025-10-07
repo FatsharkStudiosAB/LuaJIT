@@ -404,12 +404,7 @@ LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
 LUA_API lua_State *luaFS_newstate(lua_Alloc f, void *ud)
 {
 #if LJ_64 && !LJ_GC64
-  void *probe = f(ud, 0, 0, 8);
-  int ok = (uintptr_t)probe < 0x40000000u;
-  if (!ok)
-    fputs("Invalid allocator provided to luaFS_newstate()\n", stderr);
-  f(ud, probe, 8, 0);
-  return ok ? lj_state_newstate(f, ud) : 0;
+  return lj_state_newstate(f, ud);
 #else
   return lua_newstate(f, ud);
 #endif
