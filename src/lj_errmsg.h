@@ -194,6 +194,10 @@ ERRDEF(BUFFER_EOB,	"unexpected end of buffer")
 ERRDEF(BUFFER_LEFTOV,	"left-over data in buffer")
 #endif
 
+/* Fatshark extensions. */
+ERRDEF(DUP_DEPTH,	"max dup depth exceeded")
+ERRDEF(DUP_MT,		"cannot dup a table with a metatable")
+
 #undef ERRDEF
 
 /* Detecting unused error messages:

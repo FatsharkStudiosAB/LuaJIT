@@ -307,11 +307,16 @@ LJLIB_NOREG LJLIB_CF(table_size)
   return 2;
 }
 
-static GCtab *deepdup(lua_State *L, const GCtab *kt)
+static GCtab *auxdup(lua_State *L, TValue *dst, int32_t depth)
 {
   GCtab *t;
+  const GCtab *kt = tabV(dst);
   uint32_t asize, hmask;
+  if (gcref(kt->metatable)) lj_err_caller(L, LJ_ERR_DUP_MT);
+  if (depth <= 0) lj_err_caller(L, LJ_ERR_DUP_DEPTH);
+  depth--;
   t = lj_tab_new(L, kt->asize, kt->hmask > 0 ? lj_fls(kt->hmask)+1 : 0);
+  settabV(L, dst, t);
   t->nomm = 0;  /* Keys with metamethod names may be present. */
   asize = kt->asize;
   if (asize > 0) {
@@ -320,7 +325,7 @@ static GCtab *deepdup(lua_State *L, const GCtab *kt)
     uint32_t i;
     for (i = 0; i < asize; i++) {
       copyTV(L, &arr[i], &karr[i]);
-      if (tvistab(&arr[i])) settabV(L, &arr[i], deepdup(L, tabV(&arr[i])));
+      if (tvistab(&arr[i])) auxdup(L, &arr[i], depth);
     }
   }
   hmask = kt->hmask;
@@ -334,20 +339,25 @@ static GCtab *deepdup(lua_State *L, const GCtab *kt)
       Node *kn = &knode[i];
       Node *n = &node[i];
       Node *next = nextnode(kn);
-      /* Don't use copyTV here, since it asserts on a copy of a dead key. */
-      n->val = kn->val; n->key = kn->key;
-      if (tvistab(&n->val)) settabV(L, &n->val, deepdup(L, tabV(&n->val)));
-      if (tvistab(&n->key)) settabV(L, &n->key, deepdup(L, tabV(&n->val)));
-      setmref(n->next, next == NULL? next : (Node *)((char *)next + d));
+      copyTV(L, &n->val, &kn->val);
+      copyTV(L, &n->key, &kn->key);
+      if (tvistab(&n->val)) auxdup(L, &n->val, depth);
+      if (tvistab(&n->key)) auxdup(L, &n->key, depth);
+      setmref(n->next, next == NULL ? next : (Node *)((char *)next + d));
     }
   }
   return t;
 }
 
-LJLIB_NOREG LJLIB_CF(table_dup)		LJLIB_REC(.)
+/* local copy = table.fatshark.dup(t [, maxdepth]) */
+LJLIB_CF(table_dup)
 {
   const GCtab *kt = lj_lib_checktab(L, 1);
-  settabV(L, L->top-1, deepdup(L, kt));
+  int32_t maxdepth = lj_lib_optint(L, 2, 1);
+  if (maxdepth > 200) maxdepth = 200;
+  lj_gc_check(L);
+  copyTV(L, L->top, L->base);
+  auxdup(L, L->top++, maxdepth);
   return 1;
 }
 
