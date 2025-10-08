@@ -625,7 +625,7 @@ typedef struct StrInternState {
   StrID id;		/* Next string ID. */
   uint8_t idreseed;	/* String ID reseed counter. */
   uint8_t second;	/* String interning table uses secondary hashing. */
-  uint8_t fsfixstrid;	/* Restore old string ID behaviour. Temporary. */
+  uint8_t fs_fixstrid;	/* Restore old string ID behaviour. */
   uint8_t unused2;
   LJ_ALIGN(8) uint64_t seed;	/* Random string seed. */
 } StrInternState;

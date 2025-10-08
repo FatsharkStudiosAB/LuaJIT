@@ -711,7 +711,8 @@ extern void *LJ_WIN_LOADLIBA(const char *path);
 /* Security defaults. */
 #ifndef LUAJIT_SECURITY_PRNG
 /* PRNG init: 0 = fixed/insecure, 1 = secure from OS. */
-#define LUAJIT_SECURITY_PRNG	1
+/* FATSHARK: Globally disabled due to performance needs. */
+#define LUAJIT_SECURITY_PRNG	0
 #endif
 
 #ifndef LUAJIT_SECURITY_STRHASH

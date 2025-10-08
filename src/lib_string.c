@@ -671,7 +671,7 @@ LJLIB_CF(string_format)		LJLIB_REC(.)
 
 LJLIB_NOREG LJLIB_CF(string_fsfixstrid)
 {
-  G(L)->str.fsfixstrid = tvistruecond(L->base);
+  G(L)->str.fs_fixstrid = 1;
   return 0;
 }
 
