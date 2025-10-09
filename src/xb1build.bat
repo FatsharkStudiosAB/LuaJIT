@@ -91,14 +91,15 @@ buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 @echo.
 @echo === Successfully built LuaJIT for Xbox One ===
 
-@goto :END
+@goto :EOF
 :BAD
 @echo.
 @echo *******************************************************
 @echo *** Build FAILED -- Please check the error messages ***
 @echo *******************************************************
-@goto :END
+@exit /b 1
+@goto :EOF
 :FAIL
 @echo To run this script you must open a "Visual Studio .NET Command Prompt"
 @echo (64 bit host compiler). The Xbox One SDK must be installed, too.
-:END
+@exit /b 1

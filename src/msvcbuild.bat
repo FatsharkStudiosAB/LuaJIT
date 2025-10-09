@@ -154,21 +154,20 @@ if exist luajit.exe.manifest^
 @echo.
 @echo === Successfully built LuaJIT for Windows/%LJARCH% ===
 
-@goto :END
+@goto :EOF
 :SETHOSTVARS
 @if "%VSCMD_ARG_HOST_ARCH%_%VSCMD_ARG_TGT_ARCH%" equ "x64_arm64" (
   call "%VSINSTALLDIR%Common7\Tools\VsDevCmd.bat" -arch=%VSCMD_ARG_HOST_ARCH% -no_logo
   echo on
 )
-@goto :END
+@goto :EOF
 :BAD
 @echo.
 @echo *******************************************************
 @echo *** Build FAILED -- Please check the error messages ***
 @echo *******************************************************
 @exit /b 1
-@goto :END
+@goto :EOF
 :FAIL
 @echo You must open a "Visual Studio Command Prompt" to run this script
 @exit /b 1
-:END

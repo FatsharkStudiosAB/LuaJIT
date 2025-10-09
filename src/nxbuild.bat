@@ -147,13 +147,14 @@ for %%f in (lj_*.c lib_*.c) do (
 @echo.
 @echo === Successfully built LuaJIT for Nintendo Switch (%TARGETLIB_SUFFIX%) ===
 
-@goto :END
+@goto :EOF
 :BAD
 @echo.
 @echo *******************************************************
 @echo *** Build FAILED -- Please check the error messages ***
 @echo *******************************************************
-@goto :END
+@exit /b 1
+@goto :EOF
 :FAIL
 @echo To run this script you must open a "Native Tools Command Prompt for VS".
 @echo.
@@ -162,4 +163,4 @@ for %%f in (lj_*.c lib_*.c) do (
 @echo must match the cross-compiled target (32 or 64 bits).
 @echo.
 @echo Keep in mind that NintendoSDK + NX Addon must be installed, too.
-:END
+@exit /b 1

@@ -83,14 +83,15 @@ del %TARGETLIB%
 @echo.
 @echo === Successfully built LuaJIT for PS Vita ===
 
-@goto :END
+@goto :EOF
 :BAD
 @echo.
 @echo *******************************************************
 @echo *** Build FAILED -- Please check the error messages ***
 @echo *******************************************************
-@goto :END
+@exit /b 1
+@goto :EOF
 :FAIL
 @echo To run this script you must open a "Visual Studio .NET Command Prompt"
 @echo (32 bit host compiler). The PS Vita SDK must be installed, too.
-:END
+@exit /b 1
