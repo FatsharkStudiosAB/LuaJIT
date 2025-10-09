@@ -345,6 +345,8 @@ GCstr *lj_str_new(lua_State *L, const char *str, size_t lenx)
     if (LJ_UNLIKELY(coll > LJ_STR_MAXCOLL) && !hashalg) {
       return lj_str_rehash_chain(L, hash, str, len);
     }
+#else
+  UNUSED(coll); /* Silence compiler. */
 #endif
     /* Otherwise allocate a new string. */
     return lj_str_alloc(L, str, len, hash, hashalg);
