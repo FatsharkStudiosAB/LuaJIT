@@ -367,7 +367,7 @@ static GCtab *auxdup(lua_State *L, TValue *dst, int32_t depth)
 /* local copy = table.fatshark.dup(t [, maxdepth]) */
 LJLIB_CF(table_fatshark_dup)
 {
-  const GCtab *kt = lj_lib_checktab(L, 1);
+  (void)lj_lib_checktab(L, 1);
   int32_t maxdepth = lj_lib_optint(L, 2, 1);
   if (maxdepth > 200) maxdepth = 200;
   lj_gc_check(L);
