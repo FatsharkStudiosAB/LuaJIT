@@ -90,11 +90,7 @@
 
 #include <errno.h>
 /* If this include fails, then rebuild with: -DLUAJIT_USE_SYSMALLOC */
-#if LJ_TARGET_PS5
-#include "ps5_mmap.h"
-#else
 #include <sys/mman.h>
-#endif
 
 #define LJ_ALLOC_MMAP		1
 

@@ -334,7 +334,7 @@ static int error_finalizer(lua_State *L)
 #ifdef LUAJIT_USE_SYSMALLOC
 
 #if LJ_64 && !LJ_GC64 && !defined(LUAJIT_USE_VALGRIND)
-//#error "Must use builtin allocator for 64 bit target"
+#error "Must use builtin allocator for 64 bit target"
 #endif
 
 static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
@@ -370,7 +370,7 @@ LUALIB_API lua_State *luaL_newstate(void)
 LUALIB_API lua_State *luaL_newstate(void)
 {
   lua_State *L;
-#if LJ_64 && !LJ_GC64 && !LJ_TARGET_PS5
+#if LJ_64 && !LJ_GC64
   L = lj_state_newstate(LJ_ALLOCF_INTERNAL, NULL);
 #else
   L = lua_newstate(LJ_ALLOCF_INTERNAL, NULL);
@@ -388,7 +388,7 @@ LUALIB_API lua_State *luaL_newstate(void)
   return L;
 }
 
-#if LJ_64 && !LJ_GC64 && !LJ_TARGET_PS5
+#if LJ_64 && !LJ_GC64
 LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
 {
   UNUSED(f); UNUSED(ud);

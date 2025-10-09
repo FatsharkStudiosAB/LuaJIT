@@ -252,11 +252,7 @@ static void *callback_mcode_init(global_State *g, uint32_t *page)
 
 #elif LJ_TARGET_POSIX
 
-#if LJ_TARGET_PS5
-#include "ps5_mmap.h"
-#else
 #include <sys/mman.h>
-#endif
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS   MAP_ANON
 #endif
