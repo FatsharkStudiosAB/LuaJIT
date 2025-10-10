@@ -669,15 +669,21 @@ LJLIB_CF(string_format)		LJLIB_REC(.)
 
 /* ------------------------------------------------------------------------ */
 
-LJLIB_NOREG LJLIB_CF(string_fsfixstrid)
+#define LJLIB_MODULE_string_fatshark
+
+/* string.fatshark.fixstrid() */
+LJLIB_CF(string_fatshark_fixstrid)
 {
   G(L)->str.fs_fixstrid = 1;
   return 0;
 }
 
-static int luaopen_string_fsfixstrid(lua_State *L)
+#include "lj_libdef.h"
+
+static int luaopen_string_fatshark(lua_State *L)
 {
-  return lj_lib_postreg(L, lj_cf_string_fsfixstrid, FF_string_fsfixstrid, "fsfixstrid");
+  LJ_LIB_REG(L, "string.fatshark", string_fatshark);
+  return 1;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -698,7 +704,7 @@ LUALIB_API int luaopen_string(lua_State *L)
 #if LJ_HASBUFFER
   lj_lib_prereg(L, LUA_STRLIBNAME ".buffer", luaopen_string_buffer, tabV(L->top-1));
 #endif
-  lj_lib_prereg(L, LUA_STRLIBNAME ".fsfixstrid", luaopen_string_fsfixstrid, tabV(L->top-1));
+  lj_lib_prereg(L, LUA_STRLIBNAME ".fatshark", luaopen_string_fatshark, tabV(L->top-1));
   return 1;
 }
 

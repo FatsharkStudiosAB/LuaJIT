@@ -11,11 +11,11 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Add luaFS_newstate to plug in allocators in 64-bit mode w/o GC64.
 - Add LUAFS_GCESTIMATE that returns an estimate of uncollected garbage.
 - Change the bytecode header to \x1bFS as a step towards private modifications.
-- Add string.fsfixstrid to ease porting legacy code that depends on [`pairs()` order](https://luajit.org/faq.html#order).
+- Add string.fatshark.fixstrid to ease porting legacy code that depends on [`pairs()` order](https://luajit.org/faq.html#order).
 - Change VM security values to suit performance needs.
 - Add .pdb to .gitignore.
 - Set ERRORLEVEL on msvcbuild.bat failure.
-- Add table.size to get raw array/hash sizes.
+- Add table.fatshark.size to get raw array/hash sizes.
 - Add line numbers and constants to bc.lua output.
 - Add table.dup.
 

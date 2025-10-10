@@ -44,7 +44,6 @@ local jit = require("jit")
 local jutil = require("jit.util")
 local vmdef = require("jit.vmdef")
 local bit = require("bit")
-require("table.size")
 local sub, gsub, format = string.sub, string.gsub, string.format
 local match, concat = string.match, table.concat
 local byte, band, shr = string.byte, bit.band, bit.rshift
