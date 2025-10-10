@@ -20,6 +20,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Add table.fatshark.dup.
 - Add table.fatshark.keys.
 - Add table.fatshark.any.
+- Add table.fatshark.count.
 - Add string.fatshark.hash.
 
 # License

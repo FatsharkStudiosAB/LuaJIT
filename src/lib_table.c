@@ -386,6 +386,17 @@ LJLIB_CF(table_fatshark_any)
   return 1;
 }
 
+/* local n = table.fatshark.count(tab) */
+LJLIB_CF(table_fatshark_count)
+{
+  GCtab *t = lj_lib_checktab(L, 1);
+  uint32_t n = 0;
+  setnilV(L->top);
+  while (lj_tab_next(t, L->top, L->top)) ++n;
+  setintV(L->top++, n);
+  return 1;
+}
+
 /* local tkeys, nkeys = table.fatshark.keys(t [, out]) */
 LJLIB_CF(table_fatshark_keys)
 {
