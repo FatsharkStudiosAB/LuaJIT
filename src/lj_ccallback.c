@@ -119,16 +119,16 @@ static void *callback_mcode_init(global_State *g, uint8_t *page)
 #endif
   for (slot = 0; slot < CALLBACK_MAX_SLOT; slot++) {
     /* mov al, slot; jmp group */
-    *p++ = XI_MOVrib | RID_EAX; *p++ = (uint8_t)slot;
+    *p++ = (uint8_t)XI_MOVrib | RID_EAX; *p++ = (uint8_t)slot;
     if ((slot & 31) == 31 || slot == CALLBACK_MAX_SLOT-1) {
       /* push ebp/rbp; mov ah, slot>>8; mov ebp, &g. */
       *p++ = XI_PUSH + RID_EBP;
       *p++ = XI_MOVrib | (RID_EAX+4); *p++ = (uint8_t)(slot >> 8);
 #if LJ_GC64
-      *p++ = 0x48; *p++ = XI_MOVri | RID_EBP;
+      *p++ = 0x48; *p++ = (uint8_t)XI_MOVri | RID_EBP;
       *(uint64_t *)p = (uint64_t)(g); p += 8;
 #else
-      *p++ = XI_MOVri | RID_EBP;
+      *p++ = (uint8_t)XI_MOVri | RID_EBP;
       *(int32_t *)p = i32ptr(g); p += 4;
 #endif
 #if LJ_64
