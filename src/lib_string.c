@@ -671,6 +671,15 @@ LJLIB_CF(string_format)		LJLIB_REC(.)
 
 #define LJLIB_MODULE_string_fatshark
 
+/* local hash, sid = string.fatshark.hash(str) */
+LJLIB_CF(string_fatshark_hash)
+{
+  GCstr *s = lj_lib_checkstr(L, 1);
+  setintV(L->top++, s->hash);
+  setintV(L->top++, s->sid);
+  return 2;
+}
+
 /* string.fatshark.fixstrid() */
 LJLIB_CF(string_fatshark_fixstrid)
 {
