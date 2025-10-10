@@ -19,6 +19,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Add line numbers and constants to bc.lua output.
 - Add table.fatshark.dup.
 - Add table.fatshark.keys.
+- Add table.fatshark.any.
 - Add string.fatshark.hash.
 
 # License

@@ -313,15 +313,6 @@ static int luaopen_table_clear(lua_State *L)
 
 #define LJLIB_MODULE_table_fatshark
 
-/* local asize, hmask = table.fatshark.size(tab) */
-LJLIB_CF(table_fatshark_size)
-{
-  GCtab *t = lj_lib_checktab(L, 1);
-  setnumV(L->top++, t->asize);
-  setnumV(L->top++, t->hmask);
-  return 2;
-}
-
 static GCtab *auxdup(lua_State *L, TValue *dst, int32_t depth)
 {
   GCtab *t;
@@ -373,6 +364,25 @@ LJLIB_CF(table_fatshark_dup)
   lj_gc_check(L);
   copyTV(L, L->top, L->base);
   auxdup(L, L->top++, maxdepth);
+  return 1;
+}
+
+/* local asize, hmask = table.fatshark.size(tab) */
+LJLIB_CF(table_fatshark_size)
+{
+  GCtab *t = lj_lib_checktab(L, 1);
+  setnumV(L->top++, t->asize);
+  setnumV(L->top++, t->hmask);
+  return 2;
+}
+
+/* local bool = table.fatshark.any(tab) */
+LJLIB_CF(table_fatshark_any)
+{
+  GCtab *t = lj_lib_checktab(L, 1);
+  setnilV(L->top);
+  setboolV(L->top, lj_tab_next(t, L->top, L->top));
+  L->top++;
   return 1;
 }
 
