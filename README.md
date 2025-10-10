@@ -17,8 +17,8 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Set ERRORLEVEL on msvcbuild.bat failure.
 - Add table.fatshark.size to get raw array/hash sizes.
 - Add line numbers and constants to bc.lua output.
-- Add table.dup.
-
+- Add table.fatshark.dup.
+- Add table.fatshark.keys.
 # License
 
 LuaJIT is Copyright (C) 2005-2025 Mike Pall.

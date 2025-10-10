@@ -376,6 +376,30 @@ LJLIB_CF(table_fatshark_dup)
   return 1;
 }
 
+/* local tkeys, nkeys = table.fatshark.keys(t [, out]) */
+LJLIB_CF(table_fatshark_keys)
+{
+  GCtab *t = lj_lib_checktab(L, 1);
+  GCtab *tkeys = lj_lib_checktabornil(L, 2);
+  TValue *o;
+  int32_t nkeys = 0;
+  if (LJ_UNLIKELY(!tkeys)) {
+    tkeys = lj_tab_new(L, t->hmask+1, 0);
+    settabV(L, L->base+1, tkeys);
+  }
+  o = L->base+2;
+  setnilV(o);
+  while (lj_tab_next(t, o, o)) {
+    TValue *k;
+    nkeys++;
+    k = lj_tab_setint(L, tkeys, nkeys);
+    copyTV(L, k, o);
+  };
+  setintV(L->base+2, nkeys);
+  L->top = L->base+3;
+  return 2;
+}
+
 #include "lj_libdef.h"
 
 static int luaopen_table_fatshark(lua_State *L)
