@@ -367,6 +367,20 @@ LJLIB_CF(table_fatshark_dup)
   return 1;
 }
 
+/* local dst = table.fatshark.merge(t, dst) */
+LJLIB_CF(table_fatshark_merge)
+{
+  GCtab *kt = lj_lib_checktab(L, 1);
+  GCtab *t = lj_lib_checktab(L, 2);
+  setnilV(L->top);
+  while (lj_tab_next(kt, L->top, L->top)) {
+    TValue *val = lj_tab_set(L, t, L->top);
+    copyTV(L, val, L->top+1);
+  }
+  L->top = L->base+2;
+  return 1;
+}
+
 /* local asize, hmask = table.fatshark.size(tab) */
 LJLIB_CF(table_fatshark_size)
 {
