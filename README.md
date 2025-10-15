@@ -1,12 +1,26 @@
-Fatshark's customized branch of LuaJIT.
+# Fatshark's customized branch of LuaJIT.
 
-# Description
+## Description
 
 This is Fatshark's version of LuaJIT that is used in the Stingray engine.
 It is not a fork, as it is regularly synchronized with the upstream
 LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 
-# Changes
+## Building
+
+Compile all platforms and package a SPM zip:
+
+```
+cmake --workflow default
+```
+
+Install locally in SR_BIN_DIR:
+
+```
+cmake --install build
+```
+
+## Changes
 
 - Add luaFS_newstate to plug in allocators in 64-bit mode w/o GC64.
 - Add LUAFS_GCESTIMATE that returns an estimate of uncollected garbage.
@@ -23,6 +37,7 @@ LuaJIT project (https://github.com/LuaJIT/LuaJIT).
 - Add table.fatshark.count.
 - Add string.fatshark.hash.
 - Add table.fatshark.merge.
+- Add a CMake wrapper around existing buildscripts.
 
 # License
 

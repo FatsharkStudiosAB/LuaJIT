@@ -5,6 +5,7 @@
 @rem Then cd to this directory and run this script. Use the following
 @rem options (in order), if needed. The default is a dynamic release build.
 @rem
+@rem   <xboxplat>    target a Xbox platform (Fatshark extension)
 @rem   nogc64        disable LJ_GC64 mode for x64
 @rem   debug         emit debug symbols
 @rem   lua52compat   enable extra Lua 5.2 extensions
@@ -43,6 +44,18 @@
 if exist minilua.exe.manifest^
   %LJMT% -manifest minilua.exe.manifest -outputresource:minilua.exe
 @endlocal
+
+@set LJPLATFORM=Windows
+@rem Fatshark extension -- support Xbox targets.
+@set XBOX_TARGET=%1
+@if not defined XBOX_TARGET goto :NOXBOX
+@if /i not "%XBOX_TARGET:~0,10%"=="GamingXbox" goto :NOXBOX
+@call "%GameDK%/Command Prompts/GamingXboxVars.cmd" %XBOX_TARGET%
+@if errorlevel 1 goto :BAD
+@cd /d "%~dp0"
+@shift
+@set LJPLATFORM=Xbox
+:NOXBOX
 
 @set DASMFLAGS=-D WIN -D JIT -D FFI -D ENDIAN_LE -D FPU -D P64
 @set LJARCH=x64
@@ -152,7 +165,7 @@ if exist luajit.exe.manifest^
 @del host\buildvm_arch.h
 @del lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
 @echo.
-@echo === Successfully built LuaJIT for Windows/%LJARCH% ===
+@echo === Successfully built LuaJIT for %LJPLATFORM%/%LJARCH% ===
 
 @goto :EOF
 :SETHOSTVARS

@@ -9,7 +9,7 @@
     {
       "name": "default",
       "displayName": "LuaJIT Fatshark",
-      "description": "Default build using MSVC generator",
+      "description": "Default build for all targets.",
       "generator": "Visual Studio 17 2022",
       "binaryDir": "${sourceDir}/build"
     }
@@ -18,6 +18,32 @@
     {
       "name": "default",
       "configurePreset": "default"
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "generators": ["ZIP"]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "default",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "default"
+        },
+        {
+          "type": "build",
+          "name": "default"
+        },
+        {
+          "type": "package",
+          "name": "default"
+        }
+      ]
     }
   ]
 }
