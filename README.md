@@ -14,7 +14,7 @@ Compile all platforms and package a SPM zip:
 cmake --workflow default
 ```
 
-Install locally in SR_BIN_DIR:
+Install locally in SR_LIB_DIR:
 
 ```
 cmake --install build
@@ -38,6 +38,7 @@ cmake --install build
 - Add string.fatshark.hash.
 - Add table.fatshark.merge.
 - Add a CMake wrapper around existing buildscripts.
+- Add jit.fatshark.sizeof.
 
 # License
 

@@ -616,6 +616,60 @@ static int luaopen_jit_profile(lua_State *L)
 
 #endif
 
+/* -- jit.fatshark module ------------------------------------------------- */
+
+#define LJLIB_MODULE_jit_fatshark
+
+/* local bytes = jit.fatshark.sizeof(value) */
+LJLIB_CF(jit_fatshark_sizeof)
+{
+  const TValue *o = lj_lib_checkany(L, 1);
+  int32_t sz = -1;
+  if (tvisstr(o)) {
+    const GCstr *str = strV(o);
+    sz = (str != &G(L)->strempty) ? lj_str_size(str->len) : 0;
+  } else if (tvistab(o)) {
+    const GCtab *t = tabV(o);
+    sz = sizeof(GCtab) + sizeof(TValue) * t->asize +
+			 (t->hmask ? sizeof(Node) * (t->hmask + 1) : 0);
+  } else if (tvisfunc(o)) {
+    const GCfunc *fn = funcV(o);
+    sz = isluafunc(fn) ? sizeLfunc((MSize)fn->l.nupvalues) :
+			 sizeCfunc((MSize)fn->c.nupvalues);
+  } else if (tvisproto(o)) {
+    sz = protoV(o)->sizept;
+  } else if (tvisthread(o)) {
+    sz = sizeof(lua_State) + sizeof(TValue) * threadV(o)->stacksize;
+  } else if (tvisudata(o)) {
+    sz = sizeof(GCudata) + udataV(o)->len;
+#if LJ_HASFFI
+  } else if (tviscdata(o)) {
+    const GCcdata *cd = cdataV(o);
+    if (cdataisv(cd)) {
+      sz = sizecdatav(cd);
+    } else {
+      const CType *ct = ctype_raw(ctype_cts(L), cd->ctypeid);
+      sz = sizeof(GCcdata) + (ctype_hassize(ct->info) ? ct->size : CTSIZE_PTR);
+    }
+#endif
+  } else if (!tvisgcv(o)) {
+    sz = 0;
+  }
+  if (sz >= 0)
+    setintV(L->top++, sz);
+  else
+    setnilV(L->top++);
+  return 1;
+}
+
+#include "lj_libdef.h"
+
+static int luaopen_jit_fatshark(lua_State *L)
+{
+  LJ_LIB_REG(L, "jit.fatshark", jit_fatshark);
+  return 1;
+}
+
 /* -- JIT compiler initialization ----------------------------------------- */
 
 #if LJ_HASJIT
@@ -738,6 +792,7 @@ LUALIB_API int luaopen_jit(lua_State *L)
 #if LJ_HASJIT
   LJ_LIB_REG(L, "jit.opt", jit_opt);
 #endif
+  lj_lib_prereg(L, LUA_JITLIBNAME ".fatshark", luaopen_jit_fatshark, tabref(L->env));
   L->top -= 2;
   return 1;
 }
