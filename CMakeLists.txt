@@ -35,7 +35,8 @@ set(LJ_LIB_LINUX_ARM ${LJ_B}/libluajit_linux_aarch64.a)
 list(APPEND LJ_LIBRARIES ${LJ_LIB_WIN64} ${LJ_LIB_XBS}
   ${LJ_LIB_PS5} ${LJ_LIB_LINUX} ${LJ_LIB_LINUX_ARM}
 )
-set(LJ_SHARE ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit.natvis)
+set(LJ_SHARE ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit32.natvis)
+set(LJ_SHARE ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit64.natvis)
 file(GLOB LJ_SHARE_JIT ${LJ_S}/jit/*.lua)
 
 ##############################################################################

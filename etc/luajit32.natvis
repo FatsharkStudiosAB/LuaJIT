@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Natvis definitions for LuaJIT 2.1.0-beta3.
+  This file is automatically loaded when working from Visual Studio (see cmake/CMakeMain.cmake).
+-->
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <Type Name="lua_State">
+    <Expand>
+      <Synthetic Name="[active frame]">
+        <DisplayString>{top - base} values</DisplayString>
+        <Expand>
+          <ArrayItems>
+            <Size>top - base</Size>
+            <ValuePointer>base</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Item Name="[environment]">((GCobj *)env.gcptr32)-&gt;tab</Item>
+      <Item Name="[global state]">(global_State *)glref.ptr32</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="TValue">
+    <DisplayString Condition="it == (~0u)">(nil)</DisplayString>
+    <DisplayString Condition="it == (~1u)">(boolean) false</DisplayString>
+    <DisplayString Condition="it == (~2u)">(boolean) true</DisplayString>
+    <DisplayString Condition="((int32_t)it>>15) == -2">(lightud) {(void *)(u64 &amp; 0x00007fffffffffffull)}</DisplayString>
+    <DisplayString Condition="it == (~4u)">(string) {((GCobj *)gcr.gcptr32)-&gt;str}</DisplayString>
+    <DisplayString Condition="it == (~5u)">(upval) ((GCobj *)gcr.gcptr32)-&gt;uv</DisplayString>
+    <DisplayString Condition="it == (~6u)">(thread) {((GCobj *)gcr.gcptr32)-&gt;th}</DisplayString>
+    <DisplayString Condition="it == (~7u)">(proto) {((GCobj *)gcr.gcptr32)-&gt;pt}</DisplayString>
+    <DisplayString Condition="it == (~8u)">(function) {((GCobj *)gcr.gcptr32)-&gt;fn}</DisplayString>
+    <DisplayString Condition="it == (~11u)">(table) {((GCobj *)gcr.gcptr32)-&gt;tab}</DisplayString>
+    <DisplayString Condition="it == (~12u)">(udata) {((GCobj *)gcr.gcptr32)-&gt;ud}</DisplayString>
+    <DisplayString Condition="it &lt;= 0xfffeffffu">(number) {n,g}</DisplayString>
+    <DisplayString>[unknown tag {~it}] {i,x}</DisplayString>
+    <Expand>
+      <Item Name="[lightud]" Condition="((int32_t)it>>15) == -2">(stingray::TempVector3 *)(u64 &amp; 0x00007fffffffffffull)</Item>
+      <Item Name="[string]" Condition="it == (~4u)">((GCobj *)gcr.gcptr32)-&gt;str</Item>
+      <Item Name="[upval]" Condition="it == (~5u)">((GCobj *)gcr.gcptr32)-&gt;uv</Item>
+      <Item Name="[thread]" Condition="it == (~6u)">((GCobj *)gcr.gcptr32)-&gt;th</Item>
+      <Item Name="[proto]" Condition="it == (~7u)">((GCobj *)gcr.gcptr32)-&gt;pt</Item>
+      <Item Name="[function]" Condition="it == (~8u)">((GCobj *)gcr.gcptr32)-&gt;fn</Item>
+      <Item Name="[table]" Condition="it == (~11u)">((GCobj *)gcr.gcptr32)-&gt;tab</Item>
+      <Item Name="[udata]" Condition="it == (~12u)">((GCobj *)gcr.gcptr32)-&gt;ud</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="stingray::TempVector3">
+    <DisplayString Optional="true" Condition="marker == 0x02b4dab5">(Vector3) {data}</DisplayString>
+    <DisplayString Optional="true" Condition="marker == 0x02b4dab6">(stale Vector3)</DisplayString>
+    <DisplayString Optional="true" Condition="marker == 0x58235806">(Vector4) {(stingray::Vector4 *)&amp;data}</DisplayString>
+    <DisplayString Optional="true" Condition="marker == 0x58235807">(stale Vector4)</DisplayString>
+    <DisplayString Optional="true" Condition="marker == 0x7fd2e074">(Matrix4x4) {(stingray::Matrix4x4 *)&amp;data}</DisplayString>
+    <DisplayString Condition="marker == 0x7fd2e075">(unknown lightud)</DisplayString>
+    <DisplayString>stale Matrix4x4</DisplayString>
+    <Expand>
+      <Item Optional="true" Name="[Vector3]" Condition="marker == 0x02b4dab5">data</Item>
+      <Item Optional="true" Name="[Vector4]" Condition="marker == 0x58235806">(stingray::Vector4 *)&amp;data</Item>
+      <Item Optional="true" Name="[Matrix4x4]" Condition="marker == 0x7fd2e074">(stingray::Matrix4x4 *)&amp;data</Item>
+      <Item Name="[raw pointer]" Condition="marker != 0x02b4dab5 &amp;&amp; marker != 0x58235806 &amp;&amp; marker != 0x7fd2e074">(void *)&amp;marker</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="GCstr">
+    <DisplayString>{(GCstr *)&amp;nextgc + 1,s8}</DisplayString>
+    <StringView>(const char *)((GCstr *)&amp;nextgc + 1)</StringView>
+    <Expand>
+      <Synthetic Name="[raw data]" Condition="len != 0">
+        <DisplayString>{(GCstr *)&amp;nextgc + 1,[len]}</DisplayString>
+        <StringView>(const char *)((GCstr *)&amp;nextgc + 1),[len]</StringView>
+      </Synthetic>
+    </Expand>
+ </Type>
+
+  <Type Name="GCtab">
+    <DisplayString>{{array={asize,d} hash={hmask != 0 ? hmask+1 : 0,d} metatable={metatable.gcptr32 != 0}}}</DisplayString>
+    <Expand>
+      <Synthetic Name="[array]" Condition="asize != 0">
+        <DisplayString Condition="colo &gt; 0">{asize} slots (colocated)</DisplayString>
+        <DisplayString Condition="colo &lt; 0">{asize} slots (detached)</DisplayString>
+        <DisplayString>{asize} slots</DisplayString>
+        <Expand>
+          <ArrayItems>
+            <Size>asize</Size>
+            <ValuePointer>(TValue *)array.ptr32</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+      <Synthetic Name="[hash]" Condition="hmask != 0">
+        <DisplayString>{hmask + 1} slots</DisplayString>
+        <Expand>
+          <CustomListItems>
+            <Variable Name="_ptr" InitialValue="(Node *)node.ptr32" />
+            <Variable Name="_idx" InitialValue="0" />
+            <Loop Condition="_idx &lt;= hmask">
+              <Exec>_ptr = (Node *)node.ptr32 + _idx</Exec>
+              <If Condition="_ptr-&gt;val.it != (~0u)">
+                <Item Name="[{_idx}] {_ptr->key}">_ptr,na</Item>
+              </If>
+              <Exec>_idx++</Exec>
+            </Loop>
+          </CustomListItems>
+        </Expand>
+      </Synthetic>
+      <Item Name="[metatable]" Condition="metatable.gcptr32 != 0">((GCobj *)metatable.gcptr32)-&gt;tab</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="GCudata">
+    <Expand>
+      <Item Name="[metatable]" Condition="metatable.gcptr32 != 0">((GCobj *)metatable.gcptr32)-&gt;tab</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="GCfunc">
+    <DisplayString Condition="c.ffid == 0">(lua function) {l}</DisplayString>
+    <DisplayString Condition="c.ffid == 1">(c function) {c}</DisplayString>
+    <DisplayString Condition="c.ffid &gt; 1">(builtin function) {(int)c.ffid}</DisplayString>
+    <Expand>
+      <Item Name="[lua function]" Condition="c.ffid == 0">l</Item>
+      <Item Name="[c function]" Condition="c.ffid == 1">c</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="GCfuncL">
+    <DisplayString>{(GCproto *)(pc.ptr32 - sizeof(GCproto))}</DisplayString>
+    <Expand>
+      <Item Name="[proto]">(GCproto *)((char*)pc.ptr32 - sizeof(GCproto)),na</Item>
+      <Synthetic Name="[upvalues]" Condition="nupvalues != 0">
+        <DisplayString>{(int)nupvalues} upvalues</DisplayString>
+        <Expand>
+          <IndexListItems>
+            <Size>nupvalues</Size>
+            <ValueNode>(GCupval *)uvptr[$i].gcptr32,na</ValueNode>
+          </IndexListItems>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <Type Name="GCfuncC">
+    <DisplayString>{f,na}</DisplayString>
+    <Expand>
+      <Item Name="[function]">f</Item>
+      <Synthetic Name="[upvalues]" Condition="nupvalues != 0">
+        <DisplayString>{(int)nupvalues} upvalues</DisplayString>
+        <Expand>
+          <ArrayItems>
+            <Size>nupvalues</Size>
+            <ValuePointer>upvalue</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <Type Name="GCproto">
+    <DisplayString>{(chunkname.gcptr32 + sizeof(GCstr)),s8b}:{firstline}</DisplayString>
+    <Expand>
+      <Synthetic Name="[bytecode]">
+        <DisplayString>{sizebc} operations</DisplayString>
+        <Expand>
+          <ArrayItems>
+            <Size>sizebc</Size>
+            <ValuePointer>(uint32_t *)((GCproto *)&amp;nextgc + 1),x</ValuePointer>
+          </ArrayItems>
+        </Expand>
+      </Synthetic>
+    </Expand>
+  </Type>
+
+  <Type Name="GCupval">
+    <DisplayString>{(TValue *)v.ptr32}</DisplayString>
+    <Expand>
+      <Item Name="[value]">(TValue *)v.ptr32</Item>
+      <Item Name="[closed]">closed != 0</Item>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>
