@@ -37,8 +37,8 @@ Functions tagged with *[Debug]* are exclusively for developer tooling. They must
 
 | API | Description |
 | --- | --- |
-| `local bool = table.fatshark.any(tab)` | Checks if a table has any entries (not empty). |
 | `local copy = table.fatshark.dup(t [, maxdepth])` | Returns a deep clone of the given table. Throws an error if `maxdepth` is exceeded. |
+| `local bool = table.fatshark.empty(tab)` | Returns true if a table is empty and false otherwise. |
 | `local tkeys, nkeys = table.fatshark.keys(t [, out])` | Returns an array of the given table's keys. Order is unspecified. |
 | `local asize, hmask = table.fatshark.size(tab)` | *[Debug]* Returns the internal array & hash sizes of a table. |
 | `local n = table.fatshark.count(tab) ` | Returns the total number of entries in a table. |

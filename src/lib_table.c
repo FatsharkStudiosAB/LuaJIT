@@ -390,12 +390,12 @@ LJLIB_CF(table_fatshark_size)
   return 2;
 }
 
-/* local bool = table.fatshark.any(tab) */
-LJLIB_CF(table_fatshark_any)
+/* local bool = table.fatshark.empty(tab) */
+LJLIB_CF(table_fatshark_empty)
 {
   GCtab *t = lj_lib_checktab(L, 1);
   setnilV(L->top);
-  setboolV(L->top, lj_tab_next(t, L->top, L->top));
+  setboolV(L->top, !lj_tab_next(t, L->top, L->top));
   L->top++;
   return 1;
 }
