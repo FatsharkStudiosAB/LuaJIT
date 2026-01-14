@@ -5,6 +5,7 @@
 *.obj
 *.lib
 *.exp
+*.pdb
 *.dll
 *.exe
 *.pdb
