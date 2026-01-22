@@ -1304,3 +1304,45 @@ LUA_API void lua_setallocf(lua_State *L, lua_Alloc f, void *ud)
   g->allocf = f;
 }
 
+/* -- Fatshark extensions ------------------------------------------------- */
+
+#if LJ_HASFFI
+#include "lj_ctype.h"
+#endif
+
+LUA_API int luaFS_sizeof(lua_State *L, int idx)
+{
+  cTValue *o = index2adr(L, idx);
+  int sz = -1;
+  if (tvisstr(o)) {
+    const GCstr *str = strV(o);
+    sz = (str != &G(L)->strempty) ? lj_str_size(str->len) : 0;
+  } else if (tvistab(o)) {
+    const GCtab *t = tabV(o);
+    sz = sizeof(GCtab) + sizeof(TValue) * t->asize +
+			 (t->hmask ? sizeof(Node) * (t->hmask + 1) : 0);
+  } else if (tvisfunc(o)) {
+    const GCfunc *fn = funcV(o);
+    sz = isluafunc(fn) ? sizeLfunc((MSize)fn->l.nupvalues) :
+			 sizeCfunc((MSize)fn->c.nupvalues);
+  } else if (tvisproto(o)) {
+    sz = protoV(o)->sizept;
+  } else if (tvisthread(o)) {
+    sz = sizeof(lua_State) + sizeof(TValue) * threadV(o)->stacksize;
+  } else if (tvisudata(o)) {
+    sz = sizeof(GCudata) + udataV(o)->len;
+#if LJ_HASFFI
+  } else if (tviscdata(o)) {
+    const GCcdata *cd = cdataV(o);
+    if (cdataisv(cd)) {
+      sz = sizecdatav(cd);
+    } else {
+      const CType *ct = ctype_raw(ctype_cts(L), cd->ctypeid);
+      sz = sizeof(GCcdata) + (ctype_hassize(ct->info) ? ct->size : CTSIZE_PTR);
+    }
+#endif
+  } else if (!tvisgcv(o)) {
+    sz = 0;
+  }
+  return sz;
+}

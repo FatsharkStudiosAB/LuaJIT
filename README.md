@@ -30,6 +30,7 @@ cmake --install build
 - Set ERRORLEVEL on msvcbuild.bat failure.
 - Add line numbers and constants to bc.lua output.
 - Add a CMake wrapper around existing buildscripts.
+- Add `luaFS_sizeof` to get the size in bytes of objects.
 
 ## Functions
 
