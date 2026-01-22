@@ -2,12 +2,14 @@
 ## Copyright (C) 2025 Fatshark Studios AB. All rights reserved.
 
 cmake_minimum_required(VERSION 3.22)
-project(luajit-fatshark VERSION 2.1 LANGUAGES NONE)
+project(luajit VERSION 2.1 LANGUAGES NONE)
+set(CMAKE_GENERATOR_PLATFORM x64)
 
 set(CMAKE_CONFIGURATION_TYPES Debug;Dev;Release CACHE STRING "" FORCE)
 
-set(SPM_REVISION "r2") # Increment before uploading a new version.
-set(SPM_NAME "${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-${SPM_REVISION}")
+set(SPM_REVISION "r1")
+set(SPM_VERSION "${CMAKE_PROJECT_VERSION}.fatshark_v3")
+set(SPM_NAME "${CMAKE_PROJECT_NAME}-${SPM_VERSION}-${SPM_REVISION}")
 
 ##############################################################################
 # Config.
