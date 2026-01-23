@@ -397,6 +397,8 @@ LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
 }
 #endif
 
+#endif
+
 /* Allow plugging a custom allocator even in 64-bit mode with GC64 disabled.
 ** Note: in the aforementioned case the allocator *must* return memory addresses
 ** limited to the lowest 4 GB of the virtual address space.
@@ -409,6 +411,3 @@ LUA_API lua_State *luaFS_newstate(lua_Alloc f, void *ud)
   return lua_newstate(f, ud);
 #endif
 }
-
-#endif
-
