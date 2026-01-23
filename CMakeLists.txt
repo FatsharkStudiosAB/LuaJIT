@@ -97,21 +97,21 @@ add_custom_target(linux_arm
 ##############################################################################
 # SPM & installation.
 ##############################################################################
-install(PROGRAMS ${LJ_BINARIES} DESTINATION bin)
-install(FILES ${LJ_SRC_HEADERS} DESTINATION include/lua)
-install(FILES ${LJ_LIBRARIES} DESTINATION lib)
-install(FILES ${LJ_SHARE} DESTINATION share)
-install(FILES ${LJ_SHARE_JIT} ${LJ_SHARE_JIT} DESTINATION share/jit)
+install(PROGRAMS ${LJ_BINARIES} DESTINATION "${SPM_NAME}/bin")
+install(FILES ${LJ_SRC_HEADERS} DESTINATION "${SPM_NAME}/include/lua")
+install(FILES ${LJ_LIBRARIES} DESTINATION "${SPM_NAME}/lib")
+install(FILES ${LJ_SHARE} DESTINATION "${SPM_NAME}/share")
+install(FILES ${LJ_SHARE_JIT} ${LJ_SHARE_JIT} DESTINATION "${SPM_NAME}/share/jit")
 
 # Phony target.
 add_custom_target(luajit ALL DEPENDS win64 xbs ps5 linux linux_arm)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   if(NOT DEFINED ENV{SR_LIB_DIR})
-    message(FATAL_ERROR "SR_LIB_DIR must be set")
+    message(FATAL_ERROR "Either the install prefix or SR_LIB_DIR must be set.")
   endif()
   cmake_path(CONVERT $ENV{SR_LIB_DIR} TO_CMAKE_PATH_LIST SR_LIB_DIR)
-  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE ${SR_LIB_DIR}/${SPM_NAME})
+  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE ${SR_LIB_DIR})
 endif()
 
 set(CPACK_PACKAGE_FILE_NAME ${SPM_NAME})
