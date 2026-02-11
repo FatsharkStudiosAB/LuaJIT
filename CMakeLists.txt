@@ -90,7 +90,7 @@ add_custom_target(linux_arm
   COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
           CC=clang
           CROSS="aarch64-linux-gnu-"
-          STATIC_CC="${CLANG_ARM64}"
+          STATIC_CC="${CLANG_ARM64} -fPIC"
           DYNAMIC_CC="${CLANG_ARM64} -fPIC"
           TARGET_LD="${CLANG_ARM64} -fuse-ld=lld"
   COMMAND ${CMAKE_COMMAND} -E copy libluajit.a ${LJ_LIB_LINUX_ARM}
@@ -104,7 +104,7 @@ install(PROGRAMS ${LJ_BINARIES} DESTINATION "${SPM_NAME}/bin")
 install(FILES ${LJ_SRC_HEADERS} DESTINATION "${SPM_NAME}/include/lua")
 install(FILES ${LJ_LIBRARIES} DESTINATION "${SPM_NAME}/lib")
 install(FILES ${LJ_SHARE} DESTINATION "${SPM_NAME}/share")
-install(FILES ${LJ_SHARE_JIT} ${LJ_SHARE_JIT} DESTINATION "${SPM_NAME}/share/jit")
+install(FILES ${LJ_SHARE_JIT} DESTINATION "${SPM_NAME}/share/jit")
 
 # Phony target.
 add_custom_target(luajit ALL DEPENDS win64 xbs ps5 linux linux_arm)
