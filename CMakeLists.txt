@@ -24,6 +24,9 @@ list(REMOVE_ITEM LJ_SOURCES ${LJ_S}/host/buildvm_arch.h ${LJ_S}/lj_bcdef.h
   ${LJ_S}/lj_folddef.h ${LJ_S}/luajit.h ${LJ_S}/jit/vmdef.lua
 )
 
+# Config.
+option(USE_GC32 "Use 32-bit GC references." OFF)
+
 # Outputs.
 list(APPEND LJ_BINARIES ${LJ_B}/luajit.exe)
 list(APPEND LJ_SRC_HEADERS ${LJ_S}/lua.hpp ${LJ_S}/lua.h ${LJ_S}/luaconf.h
@@ -53,7 +56,7 @@ set(CMAKE_BUILD_PARALLEL_LEVEL 1)
 # Windows.
 add_custom_target(win64
   BYPRODUCTS luajit.exe ${LJ_LIB_WIN64}
-  COMMAND ./msvcbuild.bat $<$<CONFIG:debug>:debug> static
+  COMMAND ./msvcbuild.bat $<$<BOOL:USE_GC32>:nogc64> $<$<CONFIG:debug>:debug> static
   COMMAND ${CMAKE_COMMAND} -E copy lua51.lib ${LJ_LIB_WIN64}
   COMMAND ${CMAKE_COMMAND} -E copy luajit.exe ${LJ_B}/luajit.exe
   WORKING_DIRECTORY ${LJ_S} SOURCES ${LJ_SOURCES}
@@ -61,14 +64,14 @@ add_custom_target(win64
 # XBS.
 add_custom_target(xbs
   BYPRODUCTS ${LJ_LIB_XBS}
-  COMMAND ./msvcbuild.bat GamingXboxScarlettVS2019 $<$<CONFIG:debug>:debug> static
+  COMMAND ./msvcbuild.bat GamingXboxScarlettVS2019 $<$<BOOL:USE_GC32>:nogc64> $<$<CONFIG:debug>:debug> static
   COMMAND ${CMAKE_COMMAND} -E copy lua51.lib ${LJ_LIB_XBS}
   WORKING_DIRECTORY ${LJ_S} SOURCES ${LJ_SOURCES}
 )
 # PS5.
 add_custom_target(ps5
   BYPRODUCTS ${LJ_LIB_PS5}
-  COMMAND ./ps5build.bat $<$<CONFIG:Debug>:debug>
+  COMMAND ./ps5build.bat $<$<BOOL:USE_GC32>:gc32> $<$<CONFIG:Debug>:debug>
   COMMAND ${CMAKE_COMMAND} -E copy libluajit$<$<CONFIG:Debug>:D>_ps5.a
                                     ${LJ_LIB_PS5}
   WORKING_DIRECTORY ${LJ_S} SOURCES ${LJ_SOURCES}
@@ -76,7 +79,7 @@ add_custom_target(ps5
 # Linux.
 add_custom_target(linux
   BYPRODUCTS ${LJ_LIB_LINUX}
-  COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g>
+  COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
   COMMAND ${CMAKE_COMMAND} -E copy libluajit.a ${LJ_LIB_LINUX}
   WORKING_DIRECTORY ${LJ_S} SOURCES ${LJ_SOURCES}
 )
@@ -84,7 +87,7 @@ add_custom_target(linux
 set(CLANG_ARM64 "clang --target=aarch64-linux-gnu-clang --sysroot=/usr/aarch64-linux-gnu")
 add_custom_target(linux_arm
   BYPRODUCTS ${LJ_LIB_ARM}
-  COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g>
+  COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
           CC=clang
           CROSS="aarch64-linux-gnu-"
           STATIC_CC="${CLANG_ARM64}"

@@ -11,7 +11,10 @@
       "displayName": "LuaJIT Fatshark",
       "description": "Default build for all targets.",
       "generator": "Visual Studio 17 2022",
-      "binaryDir": "${sourceDir}/build"
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "USE_GC32": "0"
+      }
     }
   ],
   "buildPresets": [
