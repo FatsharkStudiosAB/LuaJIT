@@ -13,7 +13,7 @@
       "generator": "Visual Studio 17 2022",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "USE_GC32": "0"
+        "USE_GC32": "1"
       }
     }
   ],
