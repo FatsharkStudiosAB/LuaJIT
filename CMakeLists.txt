@@ -40,8 +40,11 @@ set(LJ_LIB_LINUX_ARM ${LJ_B}/libluajit_linux_aarch64.a)
 list(APPEND LJ_LIBRARIES ${LJ_LIB_WIN64} ${LJ_LIB_XBS}
   ${LJ_LIB_PS5} ${LJ_LIB_LINUX} ${LJ_LIB_LINUX_ARM}
 )
-set(LJ_SHARE ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit32.natvis)
-set(LJ_SHARE ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit64.natvis)
+if(USE_GC32)
+  set(LJ_SHARE_NATVIS ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit32.natvis)
+else()
+  set(LJ_SHARE_NATVIS ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit64.natvis)
+endif()
 file(GLOB LJ_SHARE_JIT ${LJ_S}/jit/*.lua)
 
 ##############################################################################
@@ -103,7 +106,7 @@ add_custom_target(linux_arm
 install(PROGRAMS ${LJ_BINARIES} DESTINATION "${SPM_NAME}/bin")
 install(FILES ${LJ_SRC_HEADERS} DESTINATION "${SPM_NAME}/include/lua")
 install(FILES ${LJ_LIBRARIES} DESTINATION "${SPM_NAME}/lib")
-install(FILES ${LJ_SHARE} DESTINATION "${SPM_NAME}/share")
+install(FILES ${LJ_SHARE_NATVIS} DESTINATION "${SPM_NAME}/share" RENAME luajit.natvis)
 install(FILES ${LJ_SHARE_JIT} DESTINATION "${SPM_NAME}/share/jit")
 
 # Phony target.

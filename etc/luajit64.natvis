@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Natvis definitions for LuaJIT 2.1.0-beta3.
-  This file is automatically loaded when working from Visual Studio (see cmake/CMakeMain.cmake).
+  Natvis definitions for LuaJIT 2.1 using 64-bit GC references.
 -->
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
