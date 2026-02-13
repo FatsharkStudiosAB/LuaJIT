@@ -82,20 +82,22 @@ add_custom_target(ps5
 # Linux.
 add_custom_target(linux
   BYPRODUCTS ${LJ_LIB_LINUX}
-  COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
+  COMMAND wsl -d Ubuntu-24.04 -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
+          BUILDMODE=static
           CC="clang -fPIC"
   COMMAND ${CMAKE_COMMAND} -E copy libluajit.a ${LJ_LIB_LINUX}
   WORKING_DIRECTORY ${LJ_S} SOURCES ${LJ_SOURCES}
 )
 # Linux aarch64.
-set(CLANG_ARM64 "clang --target=aarch64-linux-gnu-clang --sysroot=/usr/aarch64-linux-gnu")
+set(CLANG_ARM64 "clang --target=aarch64-linux-gnu")
+
 add_custom_target(linux_arm
   BYPRODUCTS ${LJ_LIB_ARM}
-  COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
+  COMMAND wsl -d Ubuntu-24.04 -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
+          BUILDMODE=static
           CC=clang
           CROSS="aarch64-linux-gnu-"
           STATIC_CC="${CLANG_ARM64} -fPIC"
-          DYNAMIC_CC="${CLANG_ARM64} -fPIC"
           TARGET_LD="${CLANG_ARM64} -fuse-ld=lld"
   COMMAND ${CMAKE_COMMAND} -E copy libluajit.a ${LJ_LIB_LINUX_ARM}
   WORKING_DIRECTORY ${LJ_S} SOURCES ${LJ_SOURCES}
