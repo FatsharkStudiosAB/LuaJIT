@@ -83,10 +83,11 @@ add_custom_target(ps5
 add_custom_target(linux
   BYPRODUCTS ${LJ_LIB_LINUX}
   COMMAND wsl -e make clean all $<$<CONFIG:Debug>:CCDEBUG=-g> $<$<BOOL:USE_GC32>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
+          CC="clang -fPIC"
   COMMAND ${CMAKE_COMMAND} -E copy libluajit.a ${LJ_LIB_LINUX}
   WORKING_DIRECTORY ${LJ_S} SOURCES ${LJ_SOURCES}
 )
-# Linux arm4.
+# Linux aarch64.
 set(CLANG_ARM64 "clang --target=aarch64-linux-gnu-clang --sysroot=/usr/aarch64-linux-gnu")
 add_custom_target(linux_arm
   BYPRODUCTS ${LJ_LIB_ARM}
@@ -103,22 +104,21 @@ add_custom_target(linux_arm
 ##############################################################################
 # SPM & installation.
 ##############################################################################
-install(PROGRAMS ${LJ_BINARIES} DESTINATION "${SPM_NAME}/bin")
-install(FILES ${LJ_SRC_HEADERS} DESTINATION "${SPM_NAME}/include/lua")
-install(FILES ${LJ_LIBRARIES} DESTINATION "${SPM_NAME}/lib")
-install(FILES ${LJ_SHARE_NATVIS} DESTINATION "${SPM_NAME}/share" RENAME luajit.natvis)
-install(FILES ${LJ_SHARE_JIT} DESTINATION "${SPM_NAME}/share/jit")
+install(PROGRAMS ${LJ_BINARIES} DESTINATION "bin")
+install(FILES ${LJ_SRC_HEADERS} DESTINATION "include/lua")
+install(FILES ${LJ_LIBRARIES} DESTINATION "lib")
+install(FILES ${LJ_SHARE_NATVIS} DESTINATION "share" RENAME "luajit.natvis")
+install(FILES ${LJ_SHARE_JIT} DESTINATION "share/jit")
 
 # Phony target.
 add_custom_target(luajit ALL DEPENDS win64 xbs ps5 linux linux_arm)
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  if(NOT DEFINED ENV{SR_LIB_DIR})
-    message(FATAL_ERROR "Either the install prefix or SR_LIB_DIR must be set.")
-  endif()
-  cmake_path(CONVERT $ENV{SR_LIB_DIR} TO_CMAKE_PATH_LIST SR_LIB_DIR)
-  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE ${SR_LIB_DIR})
+# Intall prefix always set regardless of CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT.
+if(NOT DEFINED ENV{SR_LIB_DIR})
+  message(FATAL_ERROR "Either the install prefix or SR_LIB_DIR must be set.")
 endif()
+cmake_path(CONVERT $ENV{SR_LIB_DIR} TO_CMAKE_PATH_LIST SR_LIB_DIR)
+set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE "${SR_LIB_DIR}/${SPM_NAME}")
 
 set(CPACK_PACKAGE_FILE_NAME ${SPM_NAME})
 include(CPack) # Should be last.
