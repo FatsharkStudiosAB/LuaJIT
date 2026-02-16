@@ -25,7 +25,7 @@ list(REMOVE_ITEM LJ_SOURCES ${LJ_S}/host/buildvm_arch.h ${LJ_S}/lj_bcdef.h
 )
 
 # Config.
-option(USE_GC32 "Use 32-bit GC references." OFF)
+option(USE_GC32 "Use 32-bit GC references." ON)
 
 # Outputs.
 list(APPEND LJ_BINARIES ${LJ_B}/luajit.exe)
