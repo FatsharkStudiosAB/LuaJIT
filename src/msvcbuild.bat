@@ -21,7 +21,7 @@
 @set LJCOMPILE=cl /nologo /c /O2 /W3 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_STDIO_INLINE=__declspec(dllexport)__inline
 @set LJDYNBUILD=/DLUA_BUILD_AS_DLL /MD
 @set LJDYNBUILD_DEBUG=/DLUA_BUILD_AS_DLL /MDd
-@set LJCOMPILETARGET=/Zi
+@set LJCOMPILETARGET=/Z7
 @set LJLINKTYPE=/DEBUG /RELEASE
 @set LJLINKTYPE_DEBUG=/DEBUG
 @set LJLINKTARGET=/OPT:REF /OPT:ICF /INCREMENTAL:NO
@@ -34,6 +34,7 @@
 @set LJDLLNAME=lua51.dll
 @set LJLIBNAME=lua51.lib
 @set ALL_LIB=lib_base.c lib_math.c lib_bit.c lib_string.c lib_table.c lib_io.c lib_os.c lib_package.c lib_debug.c lib_jit.c lib_ffi.c lib_buffer.c
+@set LJNATVIS=/NATVIS:..\etc\luajit64.natvis
 
 @setlocal
 @call :SETHOSTVARS
@@ -77,6 +78,7 @@ if exist minilua.exe.manifest^
 @shift
 @set DASC=vm_x86.dasc
 @set LJCOMPILE=%LJCOMPILE% /DLUAJIT_DISABLE_GC64
+@set LJNATVIS=/NATVIS:..\etc\luajit32.natvis
 :DA
 @if "%1" neq "lua52compat" goto :NOLUA52COMPAT
 @shift
@@ -126,7 +128,7 @@ buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 %LJCOMPILE% %LJDYNBUILD% lj_*.c lib_*.c
 @if errorlevel 1 goto :BAD
 @if "%1"=="mixed" goto :STATICLIB
-%LJLINK% /DLL /OUT:%LJDLLNAME% lj_*.obj lib_*.obj
+%LJLINK% /DLL /OUT:%LJDLLNAME% lj_*.obj lib_*.obj %LJNATVIS%
 @if errorlevel 1 goto :BAD
 @goto :MTDLL
 :STATIC
@@ -141,7 +143,7 @@ buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 %LJCOMPILE% %LJDYNBUILD% ljamalg.c
 @if errorlevel 1 goto :BAD
 @if "%2"=="mixed" goto :AMALGSTATICLIB
-%LJLINK% /DLL /OUT:%LJDLLNAME% ljamalg.obj lj_vm.obj
+%LJLINK% /DLL /OUT:%LJDLLNAME% ljamalg.obj lj_vm.obj %LJNATVIS%
 @if errorlevel 1 goto :BAD
 @goto :MTDLL
 :AMALGSTATIC
@@ -156,7 +158,7 @@ if exist %LJDLLNAME%.manifest^
 
 %LJCOMPILE% luajit.c
 @if errorlevel 1 goto :BAD
-%LJLINK% /OUT:luajit.exe luajit.obj %LJLIBNAME%
+%LJLINK% /OUT:luajit.exe luajit.obj %LJLIBNAME% %LJNATVIS%
 @if errorlevel 1 goto :BAD
 if exist luajit.exe.manifest^
   %LJMT% -manifest luajit.exe.manifest -outputresource:luajit.exe

@@ -24,7 +24,7 @@ list(REMOVE_ITEM LJ_SOURCES ${LJ_S}/host/buildvm_arch.h ${LJ_S}/lj_bcdef.h
   ${LJ_S}/lj_folddef.h ${LJ_S}/luajit.h ${LJ_S}/jit/vmdef.lua
 )
 
-# Config.
+# Cache variables.
 set(USE_GC32 ON CACHE STRING "Use 32-bit GC references.")
 set(WSL_DISTRO "Ubuntu-24.04" CACHE STRING "WSL distribution to build Linux.")
 set(CLANG_ARM64_FLAGS"--target=aarch64-linux-gnu" CACHE STRING "ARM64 cross-compilation flags.")
@@ -64,7 +64,7 @@ add_custom_command(OUTPUT ${LJ_LIB_WIN64}
   COMMAND ./msvcbuild.bat $<$<BOOL:${USE_GC32}>:nogc64> $<$<CONFIG:DEBUG>:debug> static
   COMMAND ${CMAKE_COMMAND} -E copy lua51.lib ${LJ_LIB_WIN64}
   COMMAND ${CMAKE_COMMAND} -E copy luajit.exe ${LJ_B}/luajit.exe
-  WORKING_DIRECTORY ${LJ_S} DEPENDS ${LJ_SOURCES}
+  WORKING_DIRECTORY ${LJ_S} DEPENDS ${LJ_SOURCES} ${LJ_SHARE_NATVIS}
 )
 add_custom_target(win64 ALL DEPENDS ${LJ_LIB_WIN64} SOURCES ${LJ_SOURCES})
 # XBS.
