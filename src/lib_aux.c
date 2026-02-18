@@ -333,10 +333,6 @@ static int error_finalizer(lua_State *L)
 
 #ifdef LUAJIT_USE_SYSMALLOC
 
-#if LJ_64 && !LJ_GC64 && !defined(LUAJIT_USE_VALGRIND)
-#error "Must use builtin allocator for 64 bit target"
-#endif
-
 static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
   (void)ud;
@@ -351,7 +347,11 @@ static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 
 LUALIB_API lua_State *luaL_newstate(void)
 {
+  #if LJ_64 && !LJ_GC64
+  lua_State *L = lj_state_newstate(mem_alloc, NULL);
+  #else
   lua_State *L = lua_newstate(mem_alloc, NULL);
+  #endif
   if (L) {
     G(L)->panic = panic;
 #ifndef LUAJIT_DISABLE_VMEVENT
@@ -396,7 +396,6 @@ LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
   return NULL;
 }
 #endif
-
 #endif
 
 /* Allow plugging a custom allocator even in 64-bit mode with GC64 disabled.
