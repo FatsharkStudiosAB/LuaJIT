@@ -24,7 +24,7 @@
     <DisplayString Condition="it == (~0u)">(nil)</DisplayString>
     <DisplayString Condition="it == (~1u)">(boolean) false</DisplayString>
     <DisplayString Condition="it == (~2u)">(boolean) true</DisplayString>
-    <DisplayString Condition="((int32_t)it>>15) == -2">(lightud) {(void *)(u64 &amp; 0x00007fffffffffffull)}</DisplayString>
+    <DisplayString Condition="((int32_t)it>>15) == -2">(lightud) {(luaFS_lightuserdata *)(u64 &amp; 0x00007fffffffffffull)}</DisplayString>
     <DisplayString Condition="it == (~4u)">(string) {((GCobj *)gcr.gcptr32)-&gt;str}</DisplayString>
     <DisplayString Condition="it == (~5u)">(upval) ((GCobj *)gcr.gcptr32)-&gt;uv</DisplayString>
     <DisplayString Condition="it == (~6u)">(thread) {((GCobj *)gcr.gcptr32)-&gt;th}</DisplayString>
@@ -35,7 +35,7 @@
     <DisplayString Condition="it &lt;= 0xfffeffffu">(number) {n,g}</DisplayString>
     <DisplayString>[unknown tag {~it}] {i,x}</DisplayString>
     <Expand>
-      <Item Name="[lightud]" Condition="((int32_t)it>>15) == -2">(stingray::TempVector3 *)(u64 &amp; 0x00007fffffffffffull)</Item>
+      <Item Name="[lightud]" Condition="((int32_t)it>>15) == -2">(luaFS_lightuserdata *)(u64 &amp; 0x00007fffffffffffull)</Item>
       <Item Name="[string]" Condition="it == (~4u)">((GCobj *)gcr.gcptr32)-&gt;str</Item>
       <Item Name="[upval]" Condition="it == (~5u)">((GCobj *)gcr.gcptr32)-&gt;uv</Item>
       <Item Name="[thread]" Condition="it == (~6u)">((GCobj *)gcr.gcptr32)-&gt;th</Item>
@@ -43,22 +43,6 @@
       <Item Name="[function]" Condition="it == (~8u)">((GCobj *)gcr.gcptr32)-&gt;fn</Item>
       <Item Name="[table]" Condition="it == (~11u)">((GCobj *)gcr.gcptr32)-&gt;tab</Item>
       <Item Name="[udata]" Condition="it == (~12u)">((GCobj *)gcr.gcptr32)-&gt;ud</Item>
-    </Expand>
-  </Type>
-
-  <Type Name="stingray::TempVector3">
-    <DisplayString Optional="true" Condition="marker == 0x02b4dab5">(Vector3) {data}</DisplayString>
-    <DisplayString Optional="true" Condition="marker == 0x02b4dab6">(stale Vector3)</DisplayString>
-    <DisplayString Optional="true" Condition="marker == 0x58235806">(Vector4) {(stingray::Vector4 *)&amp;data}</DisplayString>
-    <DisplayString Optional="true" Condition="marker == 0x58235807">(stale Vector4)</DisplayString>
-    <DisplayString Optional="true" Condition="marker == 0x7fd2e074">(Matrix4x4) {(stingray::Matrix4x4 *)&amp;data}</DisplayString>
-    <DisplayString Condition="marker == 0x7fd2e075">(unknown lightud)</DisplayString>
-    <DisplayString>stale Matrix4x4</DisplayString>
-    <Expand>
-      <Item Optional="true" Name="[Vector3]" Condition="marker == 0x02b4dab5">data</Item>
-      <Item Optional="true" Name="[Vector4]" Condition="marker == 0x58235806">(stingray::Vector4 *)&amp;data</Item>
-      <Item Optional="true" Name="[Matrix4x4]" Condition="marker == 0x7fd2e074">(stingray::Matrix4x4 *)&amp;data</Item>
-      <Item Name="[raw pointer]" Condition="marker != 0x02b4dab5 &amp;&amp; marker != 0x58235806 &amp;&amp; marker != 0x7fd2e074">(void *)&amp;marker</Item>
     </Expand>
   </Type>
 
