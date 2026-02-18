@@ -602,6 +602,15 @@ LUA_API void *lua_touserdata(lua_State *L, int idx)
     return NULL;
 }
 
+LUA_API luaFS_lightuserdata *luaFS_tolightuserdata(lua_State *L, int idx)
+{
+  cTValue *o = index2adr(L, idx);
+  if (tvislightud(o))
+    return lightudV(G(L), o);
+  else
+    return NULL;
+}
+
 LUA_API lua_State *lua_tothread(lua_State *L, int idx)
 {
   cTValue *o = index2adr(L, idx);
