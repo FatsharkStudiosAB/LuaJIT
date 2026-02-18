@@ -31,6 +31,7 @@ cmake --install build
 - Add line numbers and constants to bc.lua output.
 - Add a CMake wrapper around existing buildscripts.
 - Add `luaFS_sizeof` to get the size in bytes of objects.
+- Add `jit.fatshark.null` to expose a `NULL` light userdata pointer.
 
 ## Functions
 

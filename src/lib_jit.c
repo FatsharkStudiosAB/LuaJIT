@@ -641,10 +641,13 @@ LJLIB_CF(jit_fatshark_sizeof)
   return 1;
 }
 
+LJLIB_PUSH(top-2) LJLIB_SET(null)
+
 #include "lj_libdef.h"
 
 static int luaopen_jit_fatshark(lua_State *L)
 {
+  lua_pushlightuserdata(L, NULL);
   LJ_LIB_REG(L, "jit.fatshark", jit_fatshark);
   return 1;
 }
