@@ -27,7 +27,7 @@
 @set DASMDIR=..\dynasm
 @set DASM=%DASMDIR%\dynasm.lua
 @set ALL_LIB=lib_base.c lib_math.c lib_bit.c lib_string.c lib_table.c lib_io.c lib_os.c lib_package.c lib_debug.c lib_jit.c lib_ffi.c lib_buffer.c
-@set GC64=-DLUAJIT_USE_SYSMALLOC
+@set GC64=
 @set DASC=vm_x64.dasc
 
 @if "%1" neq "gc32" goto :NOGC32
@@ -77,7 +77,7 @@ buildvm -m folddef -o lj_folddef.h lj_opt_fold.c
 @if errorlevel 1 goto :BAD
 
 @rem ---- Cross compiler ----
-@set LJCOMPILE="%SCE_PROSPERO_SDK_DIR%\host_tools\bin\prospero-clang" -c -Wall -DLUAJIT_DISABLE_FFI %GC64%
+@set LJCOMPILE="%SCE_PROSPERO_SDK_DIR%\host_tools\bin\prospero-clang" -c -Wall -DLUAJIT_DISABLE_FFI -DLUAJIT_USE_SYSMALLOC %GC64%
 @set LJLIB="%SCE_PROSPERO_SDK_DIR%\host_tools\bin\prospero-llvm-ar" rcus
 @set INCLUDE=""
 

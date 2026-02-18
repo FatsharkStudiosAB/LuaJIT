@@ -332,11 +332,6 @@ static int error_finalizer(lua_State *L)
 #endif
 
 #ifdef LUAJIT_USE_SYSMALLOC
-
-#if LJ_64 && !LJ_GC64 && !defined(LUAJIT_USE_VALGRIND)
-#error "Must use builtin allocator for 64 bit target"
-#endif
-
 static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
   (void)ud;
@@ -348,10 +343,18 @@ static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
     return realloc(ptr, nsize);
   }
 }
+#else
+#define mem_alloc LJ_ALLOCF_INTERNAL
+#endif
 
 LUALIB_API lua_State *luaL_newstate(void)
 {
-  lua_State *L = lua_newstate(mem_alloc, NULL);
+#if LJ_64 && !LJ_GC64 && defined(LUAJIT_USE_SYSMALLOC) && !defined(LUAJIT_USE_VALGRIND)
+  UNUSED(panic); UNUSED(error_finalizer); UNUSED(mem_alloc);
+  fputs("Cannot use the default system allocator on gc32 mode\n", stderr);
+  return NULL;
+#else
+  lua_State *L = lj_state_newstate(mem_alloc, NULL);
   if (L) {
     G(L)->panic = panic;
 #ifndef LUAJIT_DISABLE_VMEVENT
@@ -363,51 +366,25 @@ LUALIB_API lua_State *luaL_newstate(void)
 #endif
   }
   return L;
+#endif
 }
 
-#else
-
-LUALIB_API lua_State *luaL_newstate(void)
-{
-  lua_State *L;
-#if LJ_64 && !LJ_GC64
-  L = lj_state_newstate(LJ_ALLOCF_INTERNAL, NULL);
-#else
-  L = lua_newstate(LJ_ALLOCF_INTERNAL, NULL);
-#endif
-  if (L) {
-    G(L)->panic = panic;
-#ifndef LUAJIT_DISABLE_VMEVENT
-    luaL_findtable(L, LUA_REGISTRYINDEX, LJ_VMEVENTS_REGKEY, LJ_VMEVENTS_HSIZE);
-    lua_pushcfunction(L, error_finalizer);
-    lua_rawseti(L, -2, VMEVENT_HASH(LJ_VMEVENT_ERRFIN));
-    G(L)->vmevmask = VMEVENT_MASK(LJ_VMEVENT_ERRFIN);
-    L->top--;
-#endif
-  }
-  return L;
-}
-
-#if LJ_64 && !LJ_GC64
 LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
 {
+#if LJ_64 && !LJ_GC64
   UNUSED(f); UNUSED(ud);
-  fputs("Must use luaL_newstate() for 64 bit target\n", stderr);
+  fputs("Must use luaL_newstate() or luaFS_newstate() for 64 bit target\n", stderr);
   return NULL;
+#else
+  return lj_state_newstate(f, ud);
+#endif
 }
-#endif
 
-#endif
-
-/* Allow plugging a custom allocator even in 64-bit mode with GC64 disabled.
+/* Allow plugging a custom allocator even in 64-bit mode with LJ_GC64 disabled.
 ** Note: in the aforementioned case the allocator *must* return memory addresses
 ** limited to the lowest 4 GB of the virtual address space.
 */
 LUA_API lua_State *luaFS_newstate(lua_Alloc f, void *ud)
 {
-#if LJ_64 && !LJ_GC64
   return lj_state_newstate(f, ud);
-#else
-  return lua_newstate(f, ud);
-#endif
 }
