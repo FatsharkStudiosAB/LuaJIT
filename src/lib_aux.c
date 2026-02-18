@@ -333,6 +333,14 @@ static int error_finalizer(lua_State *L)
 
 #ifdef LUAJIT_USE_SYSMALLOC
 
+#if LJ_64 && !LJ_GC64
+static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
+{
+  fputs("ERROR: Use of default system allocator when LJ_64 && !LJ_GC64.", stderr);
+  fflush(stderr);
+  abort();
+}
+#else
 static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
   (void)ud;
@@ -344,6 +352,7 @@ static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
     return realloc(ptr, nsize);
   }
 }
+#endif
 
 LUALIB_API lua_State *luaL_newstate(void)
 {
