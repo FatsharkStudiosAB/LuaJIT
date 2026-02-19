@@ -27,7 +27,7 @@ list(REMOVE_ITEM LJ_SOURCES ${LJ_S}/host/buildvm_arch.h ${LJ_S}/lj_bcdef.h
 # Cache variables.
 set(USE_GC32 ON CACHE STRING "Use 32-bit GC references.")
 set(WSL_DISTRO "Ubuntu-24.04" CACHE STRING "WSL distribution to build Linux.")
-set(CLANG_ARM64_FLAGS"--target=aarch64-linux-gnu" CACHE STRING "ARM64 cross-compilation flags.")
+set(CLANG_ARM64_FLAGS "--target=aarch64-linux-gnu" CACHE STRING "ARM64 cross-compilation flags.")
 
 # Outputs.
 list(APPEND LJ_BINARIES ${LJ_B}/luajit.exe)
