@@ -7,8 +7,8 @@ set(CMAKE_GENERATOR_PLATFORM x64)
 
 set(CMAKE_CONFIGURATION_TYPES Debug;Release CACHE STRING "" FORCE)
 
-set(SPM_REVISION "r3")
-set(SPM_VERSION "${CMAKE_PROJECT_VERSION}.fatshark_v4")
+set(SPM_REVISION "r1")
+set(SPM_VERSION "${CMAKE_PROJECT_VERSION}.fatshark_v5")
 set(SPM_NAME "${CMAKE_PROJECT_NAME}-${SPM_VERSION}-${SPM_REVISION}")
 
 ##############################################################################
