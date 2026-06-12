@@ -6,13 +6,42 @@
 
   <Type Name="lua_State">
     <Expand>
-      <Synthetic Name="[active frame]">
-        <DisplayString>{top - base} values</DisplayString>
+      <Synthetic Name="[stack]">
+        <DisplayString>{top - (TValue *)stack.ptr32} total slots</DisplayString>
         <Expand>
-          <ArrayItems>
-            <Size>top - base</Size>
-            <ValuePointer>base</ValuePointer>
-          </ArrayItems>
+          <CustomListItems>
+            <Variable Name="_frame" InitialValue="base-1" />
+            <Variable Name="_nextframe" InitialValue="base-1" />
+            <Variable Name="_idx" InitialValue="0" />
+            <Variable Name="_size" InitialValue="0" />
+            <Loop Condition="_frame &gt; (TValue *)stack.ptr32">
+              <If Condition="(GCobj *)_frame-&gt;fr.func.gcptr32 != (GCobj *)this">
+                <If Condition="(_frame-&gt;fr.tp.ftsz &amp; 7) != 3">
+                  <If Condition="_idx == 0">
+                    <Exec>_size = (int)(top - _frame - 1)</Exec>
+                  </If>
+                  <If Condition="_idx != 0">
+                    <Exec>_size = (int)(_nextframe - _frame - 1)</Exec>
+                  </If>
+                  <Item Name="[{_idx}] [frame]">(TValue *)(_frame+1),[_size]</Item>
+                  <Item Name="[{_idx}] [link] (lua)" Condition="(_frame-&gt;fr.tp.ftsz &amp; 3) == 0">(GCfunc *)((_frame-1)-&gt;fr.func.gcptr32)</Item>
+                  <Item Name="[{_idx}] [link] (c)" Condition="(_frame-&gt;fr.tp.ftsz &amp; 7) == 1">(GCfunc *)((_frame-1)-&gt;fr.func.gcptr32)</Item>
+                  <Item Name="[{_idx}] [link] (continuation)" Condition="(_frame-&gt;fr.tp.ftsz &amp; 7) == 2">(GCfunc *)((_frame-1)-&gt;fr.func.gcptr32)</Item>
+                  <Item Name="[{_idx}] [link] (cpcall)" Condition="(_frame-&gt;fr.tp.ftsz &amp; 7) == 5">(GCfunc *)((_frame-1)-&gt;fr.func.gcptr32)</Item>
+                  <Item Name="[{_idx}] [link] (ff pcall)" Condition="(_frame-&gt;fr.tp.ftsz &amp; 7) == 6">(GCfunc *)((_frame-1)-&gt;fr.func.gcptr32)</Item>
+                  <Item Name="[{_idx}] [link] (ff pcall w/ hook)" Condition="(_frame-&gt;fr.tp.ftsz &amp; 7) == 7">(GCfunc *)((_frame-1)-&gt;fr.func.gcptr32)</Item>
+                  <Exec>_idx++</Exec>
+                </If>
+              </If>
+              <Exec>_nextframe = _frame</Exec>
+              <If Condition="(_frame-&gt;fr.tp.ftsz &amp; 3) == 0">
+                <Exec>_frame = _frame - (1 + ((((uint32_t *)_frame-&gt;fr.tp.pcr.ptr32)[-1]) &gt;&gt; 8) &amp; 0xff)</Exec>
+              </If>
+              <Else>
+                <Exec>_frame = (TValue *)((char *)_frame - (_frame-&gt;fr.tp.ftsz &amp; ~7))</Exec>
+              </Else>
+            </Loop>
+          </CustomListItems>
         </Expand>
       </Synthetic>
       <Item Name="[environment]">((GCobj *)env.gcptr32)-&gt;tab</Item>
@@ -159,6 +188,20 @@
     <Expand>
       <Item Name="[value]">(TValue *)v.ptr32</Item>
       <Item Name="[closed]">closed != 0</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="FrameLink">
+    <DisplayString Condition="(ftsz &amp; 2) == 0">(lua)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 1">(c)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 2">(continuation)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 3">(lua vararg)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 5">(cpcall)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 6">(ff pcall)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 7">(ff pcall w/ hook)</DisplayString>
+    <Expand>
+      <Item Name="[function]">(GCfunc *)((TValue *)(this-1)).fr.func.gcptr64</Item>
+      <Item Name="[pc]" Condition="(ftsz &amp; 2) == 0u">(BCIns *)pcr.ftsz</Item>
     </Expand>
   </Type>
 

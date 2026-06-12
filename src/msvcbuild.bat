@@ -66,6 +66,7 @@ if exist minilua.exe.manifest^
 @set DASMFLAGS=-D WIN -D JIT -D FFI -D ENDIAN_LE -D FPU
 @set LJARCH=x86
 @set LJCOMPILE=%LJCOMPILE% /arch:SSE2
+@set LJNATVIS=/NATVIS:..\etc\luajit32.natvis
 @goto :DA
 :NO32
 @if "%VSCMD_ARG_TGT_ARCH%" neq "arm64" goto :X64

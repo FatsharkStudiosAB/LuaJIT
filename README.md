@@ -22,6 +22,7 @@ cmake --install build
 
 ## Changes
 
+- Add natvis visualizators.
 - Add `luaFS_newstate` to plug in allocators in 64-bit mode w/o GC64.
 - Add `LUAFS_GCESTIMATE` that returns an estimate of memory actually in use.
 - Change the bytecode header to `\x1bFS` as a step towards private modifications.

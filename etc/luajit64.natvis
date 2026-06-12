@@ -6,13 +6,42 @@
 
   <Type Name="lua_State">
     <Expand>
-      <Synthetic Name="[active frame]">
-        <DisplayString>{top - base} values</DisplayString>
+      <Synthetic Name="[stack]">
+        <DisplayString>{top - ((TValue *)stack.ptr64 + 1)} total slots</DisplayString>
         <Expand>
-          <ArrayItems>
-            <Size>top - base</Size>
-            <ValuePointer>base</ValuePointer>
-          </ArrayItems>
+          <CustomListItems>
+            <Variable Name="_frame" InitialValue="base-1" />
+            <Variable Name="_nextframe" InitialValue="base-1" />
+            <Variable Name="_idx" InitialValue="0" />
+            <Variable Name="_size" InitialValue="0" />
+            <Loop Condition="_frame &gt; (TValue *)stack.ptr64 + 1">
+              <If Condition="(GCobj *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull) != (GCobj *)this">
+                <If Condition="(_frame-&gt;ftsz &amp; 7) != 3">
+                  <If Condition="_idx == 0">
+                    <Exec>_size = (int)(top - _frame - 1)</Exec>
+                  </If>
+                  <If Condition="_idx != 0">
+                    <Exec>_size = (int)(_nextframe - _frame - 2)</Exec>
+                  </If>
+                  <Item Name="[{_idx}] [frame]">(TValue *)(_frame+1),[_size]</Item>
+                  <Item Name="[{_idx}] [link] (lua)" Condition="(_frame-&gt;ftsz &amp; 3) == 0">(GCfunc *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull)</Item>
+                  <Item Name="[{_idx}] [link] (c)" Condition="(_frame-&gt;ftsz &amp; 7) == 1">(GCfunc *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull)</Item>
+                  <Item Name="[{_idx}] [link] (continuation)" Condition="(_frame-&gt;ftsz &amp; 7) == 2">(GCfunc *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull)</Item>
+                  <Item Name="[{_idx}] [link] (cpcall)" Condition="(_frame-&gt;ftsz &amp; 7) == 5">(GCfunc *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull)</Item>
+                  <Item Name="[{_idx}] [link] (ff pcall)" Condition="(_frame-&gt;ftsz &amp; 7) == 6">(GCfunc *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull)</Item>
+                  <Item Name="[{_idx}] [link] (ff pcall w/ hook)" Condition="(_frame-&gt;ftsz &amp; 7) == 7">(GCfunc *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull)</Item>
+                  <Exec>_idx++</Exec>
+                </If>
+              </If>
+              <Exec>_nextframe = _frame</Exec>
+              <If Condition="(_frame-&gt;ftsz &amp; 3) == 0">
+                <Exec>_frame = _frame - (2 + ((((uint32_t *)(intptr_t)_frame-&gt;ftsz)[-1]) &gt;&gt; 8) &amp; 0xff)</Exec>
+              </If>
+              <Else>
+                <Exec>_frame = (TValue *)((char *)_frame - (_frame-&gt;ftsz &amp; ~7))</Exec>
+              </Else>
+            </Loop>
+          </CustomListItems>
         </Expand>
       </Synthetic>
       <Item Name="[environment]">((GCobj *)env.gcptr64)-&gt;tab</Item>
@@ -36,13 +65,13 @@
     <DisplayString>[unknown tag {(it64 &gt;&gt; 47),x} {(it64 &gt;&gt; 47) == (~0ull)}] {u64,x}</DisplayString>
     <Expand>
       <Item Name="[lightud]" Condition="(it64 >> 47) == (~3u)">(luaFS_lightuserdata *)(u64 &amp; 0x7fffffffffffull)</Item>
-      <Item Name="[string]" Condition="it == (~4u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull)-&gt;str</Item>
-      <Item Name="[upval]" Condition="it == (~5u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull)-&gt;uv</Item>
-      <Item Name="[thread]" Condition="it == (~6u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull)-&gt;th</Item>
-      <Item Name="[proto]" Condition="it == (~7u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull)-&gt;pt</Item>
-      <Item Name="[function]" Condition="it == (~8u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull)-&gt;fn</Item>
-      <Item Name="[table]" Condition="it == (~11u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull)-&gt;tab</Item>
-      <Item Name="[udata]" Condition="it == (~12u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull)-&gt;ud</Item>
+      <Item Name="[string]" Condition="it == (~4u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull))-&gt;str</Item>
+      <Item Name="[upval]" Condition="it == (~5u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull))-&gt;uv</Item>
+      <Item Name="[thread]" Condition="it == (~6u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull))-&gt;th</Item>
+      <Item Name="[proto]" Condition="it == (~7u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull))-&gt;pt</Item>
+      <Item Name="[function]" Condition="it == (~8u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull))-&gt;fn</Item>
+      <Item Name="[table]" Condition="it == (~11u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull))-&gt;tab</Item>
+      <Item Name="[udata]" Condition="it == (~12u)">((GCobj *)(gcr.gcptr64 &amp; 0x7fffffffffffull))-&gt;ud</Item>
     </Expand>
   </Type>
 
@@ -159,6 +188,21 @@
     <Expand>
       <Item Name="[value]">(TValue *)v.ptr64</Item>
       <Item Name="[closed]">closed != 0</Item>
+    </Expand>
+  </Type>
+
+  <Type Name="FrameLink">
+    <DisplayString Condition="(ftsz &amp; 2) == 0">(lua)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 1">(c)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 2">(continuation)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 3">(lua vararg)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 5">(cpcall)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 6">(ff pcall)</DisplayString>
+    <DisplayString Condition="(ftsz &amp; 3) == 7">(ff pcall w/ hook)</DisplayString>
+    <Expand>
+      <Item Name="[function]">(GCfunc *)((_frame-1)-&gt;gcr.gcptr64 &amp; 0x7fffffffffffull)</Item>
+      <Item Name="[pc]" Condition="(ftsz &amp; 2) == 0u">(BCIns *)pcr.ptr64</Item>
+      <!--<Item Name="[slots]">(TValue *)(this+1),[ftsz &amp; ~3]</Item>-->
     </Expand>
   </Type>
 
