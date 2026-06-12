@@ -32,6 +32,7 @@ cmake --install build
 - Add a CMake wrapper around existing buildscripts.
 - Add `luaFS_sizeof` to get the size in bytes of objects.
 - Add `jit.fatshark.null` to expose a `NULL` light userdata pointer.
+- Add `luaFS_tolightuserdata` to expose a dummy type for light userdata.
 
 ## Functions
 
@@ -46,8 +47,8 @@ Functions tagged with *[Debug]* are exclusively for developer tooling. They must
 | `local n = table.fatshark.count(tab) ` | Returns the total number of entries in a table. |
 | `local dst = table.fatshark.merge(t, dst)` | Copies entries from a source to a destination table. |
 | `string.fatshark.fixstrid()` |  *[Debug]* Ease porting legacy code that depends on [`pairs()` order](https://luajit.org/faq.html#order). |
-| `local hash, sid = string.fatshark.hash(str)` | *[Debug]* List all new or modified files |
-| `local bytes = jit.fatshark.sizeof(value)` | *[Debug]* Returns the size of a value in bytes. Returns nil if not known. |
+| `local hash, sid = string.fatshark.hash(str)` | *[Debug]* Returns the hash and interned string ID. |
+| `local bytes = jit.fatshark.sizeof(value)` | *[Debug]* Returns the size of a value in bytes. Returns nil if unknown. |
 
 # License
 
