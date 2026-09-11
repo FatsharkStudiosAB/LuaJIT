@@ -38,9 +38,9 @@ set(LJ_LIB_WIN64 ${LJ_B}/lua51_win_x64.lib)
 set(LJ_LIB_XBS ${LJ_B}/lua51_xbs.lib)
 set(LJ_LIB_PS5 ${LJ_B}/libluajit_ps5.a)
 set(LJ_LIB_LINUX ${LJ_B}/libluajit_linux_x64.a)
-set(LJ_LIB_LINUX_ARM ${LJ_B}/libluajit_linux_aarch64.a)
+set(LJ_LIB_LINUX_AARCH64 ${LJ_B}/libluajit_linux_aarch64.a)
 list(APPEND LJ_LIBRARIES ${LJ_LIB_WIN64} ${LJ_LIB_XBS}
-  ${LJ_LIB_PS5} ${LJ_LIB_LINUX} ${LJ_LIB_LINUX_ARM}
+  ${LJ_LIB_PS5} ${LJ_LIB_LINUX} ${LJ_LIB_LINUX_AARCH64}
 )
 if(USE_GC32)
   set(LJ_SHARE_NATVIS ${CMAKE_CURRENT_SOURCE_DIR}/etc/luajit32.natvis)
@@ -94,17 +94,17 @@ add_custom_command(OUTPUT ${LJ_LIB_LINUX}
 add_custom_target(linux ALL DEPENDS ${LJ_LIB_LINUX} SOURCES ${LJ_SOURCES})
 # Linux aarch64.
 add_custom_command(
-  OUTPUT ${LJ_LIB_LINUX_ARM}
+  OUTPUT ${LJ_LIB_LINUX_AARCH64}
   COMMAND wsl -d ${WSL_DISTRO} -e make clean all $<$<CONFIG:DEBUG>:CCDEBUG=-g> $<$<BOOL:${USE_GC32}>:XCFLAGS=-DLUAJIT_DISABLE_GC64>
           BUILDMODE=static
           CC=clang
           CROSS="aarch64-linux-gnu-"
           STATIC_CC="clang ${CLANG_ARM64_FLAGS} -fPIC"
           TARGET_LD="clang ${CLANG_ARM64_FLAGS} -fuse-ld=lld"
-  COMMAND ${CMAKE_COMMAND} -E copy libluajit.a ${LJ_LIB_LINUX_ARM}
+  COMMAND ${CMAKE_COMMAND} -E copy libluajit.a ${LJ_LIB_LINUX_AARCH64}
   WORKING_DIRECTORY ${LJ_S} DEPENDS ${LJ_SOURCES}
 )
-add_custom_target(linux_arm ALL DEPENDS ${LJ_LIB_LINUX_ARM} SOURCES ${LJ_SOURCES})
+add_custom_target(linux_aarch64 ALL DEPENDS ${LJ_LIB_LINUX_AARCH64} SOURCES ${LJ_SOURCES})
 
 ##############################################################################
 # Visual Studio
