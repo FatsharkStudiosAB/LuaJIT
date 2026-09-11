@@ -406,7 +406,7 @@ struct lua_Debug {
 LUA_API lua_State *(luaFS_newstate) (lua_Alloc f, void *ud);
 LUA_API int (luaFS_sizeof) (lua_State *L, int idx);
 
-typedef struct luaFS_lightuserdata { char data[1]; } luaFS_lightuserdata;
-LUA_API luaFS_lightuserdata *luaFS_tolightuserdata(lua_State *L, int idx);
+typedef struct luaFS_lightuserdata { void *ptr; } luaFS_lightuserdata;
+LUA_API luaFS_lightuserdata luaFS_tolightuserdata(lua_State *L, int idx);
 
 #endif
